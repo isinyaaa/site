@@ -60,7 +60,7 @@ paginate = 5
     missingBackButtonLabel = "Back to home page"
 
     [languages.en.params.logo]
-      logoText = "Terminal"
+      logoText = "kernel & graphics"
       logoHomeLink = "/"
 
     [languages.en.menu]
