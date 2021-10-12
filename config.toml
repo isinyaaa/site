@@ -40,7 +40,7 @@ paginate = 5
   # set Twitter handles for Twitter cards
   # see https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started#card-and-content-attribution
   # do not include @
-  creator = ""
+  creator = "isinyaaa"
   site = ""
 
 [languages]
@@ -50,7 +50,7 @@ paginate = 5
     subtitle = ""
     owner = "Isabella Basso"
     keywords = ""
-    copyright = ""
+    copyright = "This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License."
     menuMore = "Show more"
     readMore = "Read more"
     readOtherPosts = "Read other posts"
