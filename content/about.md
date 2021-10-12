@@ -8,6 +8,8 @@ Hiya! I'm Isabella Basso, a 21yo Brazilian girl who's really into low-level stuf
 
 I currently study at Universidade de São Paulo (USP), and you can check out my CV [over here](/CV.pdf).
 
+> In case you're looking for it: here's the [RSS feed for this site](/index.xml).
+
 Some cool facts about me:
 
 * I love weird music!
