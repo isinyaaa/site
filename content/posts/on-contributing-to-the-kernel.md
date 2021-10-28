@@ -50,13 +50,13 @@ Then you can argue that the examples I gave don't seem minimal at all! How can o
 
 Another very important principle is that commits have to be _descriptive_, and that's a real pain to learn, I swear I'm trying, but it never seems enough. I don't want to sound dumb in the internet, you probably don't want it either, so being thorough without being verbose ends up being a real challenge! You have to write _really well_ and always keep in mind that those who're reading may not have taken a look at what you're editing, like, never (true story)!
 
-So a commit message for the kernel must have the main "pieces of code" you edited in the commit title, like `drm/amdgpu, mm` (that'd be a patch for the `mm` folder as well as the `drivers/gpu/drm/amd` folder) followed by the proper edit you made, such as `Fix oops in trace_cachefiles_mark_buried due to NULL object` (feel free to take a look at this commit: [6e9bfdc](6e9bfdcf0a3b1c8126878c21adcfc343f89d4a6a)).
+So a commit message for the kernel must have the main "pieces of code" you edited in the commit title, like `drm/amdgpu, mm` (that'd be a patch for the `mm` folder as well as the `drivers/gpu/drm/amd` folder) followed by the proper edit you made, such as `Fix oops in trace_cachefiles_mark_buried due to NULL object` (feel free to take a look at this commit: [6e9bfdc](https://github.com/torvalds/linux/commit/6e9bfdcf0a3b1c8126878c21adcfc343f89d4a6a)).
 
 Some good practices should be known here: always write your commits imperatively! I mean, I've seen some messages where this isn't so true, but at least the title must be this way, and then for the description you have a little more freedom I guess, just do it responsibly! ⚠️ Don't dare stick some 'I changed X for clarity' ⚠️ (and keep your emojis safe at home, too!)
 
 ### Where do they live?
 
-Well, this section isn't so much about where the commits live (I mean, you already know that, right?) but actually, how **you** can find a piece of code to have your chance at contributing!
+Well, this section isn't so much about where the commits live (I mean, you already know that, right?) but actually, how **you** can find a piece of code to have your chance at contributing! And please do check out [my next blog post](https://isinyaaa.github.io/posts/on-contributing-to-the-kernel-2/) if you're looking for such a thing (not necessarily related to the Linux kernel, by the way!).
 
 If you're at some uni, you probably know someone that knows about a free software student group, or maybe there's such a group on another uni close to where you are. Please, don't feel afraid of contacting them! If you truly want to contribute your interest will show, and people oftentimes want to help!
 
