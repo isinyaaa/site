@@ -1,4 +1,4 @@
-baseurl = "/"
+baseurl = "https://isinyaaa.github.io/"
 languageCode = "en-us"
 theme = "terminal"
 paginate = 5
