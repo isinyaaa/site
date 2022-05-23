@@ -1,14 +1,18 @@
----
-title: "About"
-date: 2021-10-06T08:53:32-03:00
-draft: false
----
++++
+title = "About"
+date = 2021-10-06
+updated = 2022-05-22
+path = "about"
 
-Hiya! I'm Isabella Basso, a 21yo Brazilian girl who's really into low-level stuff. I'm currently being introduced to the kernel graphics stack by my advisor, [Rodrigo Siqueira](https://siqueira.tech/) (check him out!)
+[extra]
+hide_page_meta = true
++++
+
+Hiya! I'm Isabella Basso, a 22yo Brazilian girl who's really into low-level stuff. I'm currently being introduced to the kernel graphics stack by my mentors, [Rodrigo Siqueira](https://siqueira.tech/), [Melissa Web](meow) and [André Almeida](auau) (check them out!)
 
 I currently study at Universidade de São Paulo (USP), and you can check out my CV [over here](/CV.pdf).
 
-> In case you're looking for it: here's the [RSS feed for this site](/index.xml).
+> In case you're looking for it: here's the [RSS feed for this site](/rss.xml).
 
 Some cool facts about me:
 

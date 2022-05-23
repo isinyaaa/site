@@ -4,10 +4,11 @@ date = "2021-10-07T14:55:33-03:00"
 author = "Isabella Basso"
 authorTwitter = "isinyaaa" #do not include @
 cover = ""
-tags = ["kernel", "starters", "linux"]
 keywords = ["", ""]
 description = "What if I don't wanna do kernel? :("
-showFullContent = false
+
+[taxonomies]
+tags = ["kernel", "starters", "linux"]
 +++
 
 Alright, so you came for part 2 of my very first soap opera! I'm excited to have you here, stranger :)
@@ -15,6 +16,8 @@ Alright, so you came for part 2 of my very first soap opera! I'm excited to have
 Today I'll talk about that very time I sent my first patch, which is like, still going on, but hopefully I'll make it to the next release (5.16 if I get the numbers correctly).
 
 Oh and I haven't talked about releases yet! My bad :p but I promise I'll talk about it soon :)
+
+<!-- more -->
 
 ## Context
 

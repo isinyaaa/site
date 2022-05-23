@@ -2,12 +2,10 @@
 title = "On Contributing to the Kernel (pt. 1)"
 date = "2021-10-04T20:00:00-03:00"
 author = "Isabella Basso"
-authorTwitter = "isinyaaa"
-cover = ""
-tags = ["kernel", "starters", "linux"]
-keywords = ["", ""]
 description = "You gotta start somewhere, right?"
-showFullContent = false
+
+[taxonomies]
+tags = ["kernel", "starters", "linux"]
 +++
 
 So, for starters, the Linux Kernel is the most beautiful thing ever ~~if you don't mind a little mess, I mean...~~ **no, really**, it's beautiful and I'll prove it to you! All you need to do is clone the "main" tree:
@@ -17,6 +15,8 @@ git clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 ```
 
 Well, actually, this isn't _really_ the main thing but it's _one of them_, together with the one you probably know best (if you're a rolling release Linux user, that is) [Greg Kroah-Hartman's tree](https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/) and that's only half the story, as each Linux distribution likes to put their own flavor of commits on top of that.
+
+<!-- more -->
 
 > A useful tip if you want to 'check out' both trees is to append remotes to your cloned repo, as it doesn't make sense to clone 2GB repos that share 90% of their code 'just because'… If you don't know how to do that it goes on the lines of:
 >
