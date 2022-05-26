@@ -5,7 +5,7 @@
 # sorting order for pagination
 sort_by = "date"
 
-title = "Kernel and Graphics"
+title = "crosscat.me"
 description = "Personal blog (mostly about free software)"
 insert_anchor_links = "right"
 +++

@@ -56,7 +56,7 @@ Some good practices should be known here: always write your commits imperatively
 
 ### Where do they live?
 
-Well, this section isn't so much about where the commits live (I mean, you already know that, right?) but actually, how **you** can find a piece of code to have your chance at contributing! And please do check out [my next blog post](https://isinyaaa.github.io/posts/on-contributing-to-the-kernel-2/) if you're looking for such a thing (not necessarily related to the Linux kernel, by the way!).
+Well, this section isn't so much about where the commits live (I mean, you already know that, right?) but actually, how **you** can find a piece of code to have your chance at contributing! And please do check out [my next blog post](/on-contributing-to-the-kernel-2/) if you're looking for such a thing (not necessarily related to the Linux kernel, by the way!).
 
 If you're at some uni, you probably know someone that knows about a free software student group, or maybe there's such a group on another uni close to where you are. Please, don't feel afraid of contacting them! If you truly want to contribute your interest will show, and people oftentimes want to help!
 

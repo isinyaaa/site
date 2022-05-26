@@ -61,7 +61,7 @@ If you aren't used to Git(hub|lab)land speak you might have no idea what I'm tal
 
 There are basically **two** main ways of contributing to projects, whether they're open-source or not:
 
-* There are the mailing lists, which I've talked about in the [previous post](https://isinyaaa.github.io/posts/on-contributing-to-the-kernel/) (check it out if you haven't already!).
+* There are the mailing lists, which I've talked about in the [previous post](/on-contributing-to-the-kernel/) (check it out if you haven't already!).
 * Then there are the *PR*s (that's short for _pull request_). This is the most common way of contributing to open-source nowadays, you basically take the project you want to contribute from some point of interest and then add your code on top, on another version of the project which is basically its copy (we call that a _fork_), and when you're done you can open a PR so that contributors can review your code and possibly accept it.
 
 So, in this post I'll talk a little more about sending PRs. This is pretty straightforward to be honest, specially when compared to the mailing lists. There are a few ways this can happen:

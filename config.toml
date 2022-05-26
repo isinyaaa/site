@@ -1,6 +1,6 @@
 # The URL the site will be built for
-base_url = "https://isinyaaa.github.io"
-title = "Kernel and Graphics"
+base_url = "https://crosscat.me"
+title = "crosscat"
 
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
@@ -30,7 +30,7 @@ smart_punctuation = true
 [extra]
 # Put all your custom variables here
 
-logo_text = "Kernel and Graphics"
+logo_text = "crosscat.me"
 author = "Isabella Basso"
 
 copyright_html = "<div class=\"copyright\"><span>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</span><span class=\"copyright-theme\"><span class=\"copyright-theme-sep\">:: </span>Theme is based on <a href=\"https://github.com/pawroman/zola-theme-terminimal/\">Terminimal</a></span><span class=\"copyright-theme-sep\">:: </span><a href=\"/index.xml\">rss</a></div>"

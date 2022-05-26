@@ -1,6 +1,6 @@
-# kernel & graphics website
+# [crosscat.me](https://crosscat.me) website
 
-This repo has code for my personal github pages website about kernel & graphics.
+This repo has code for my personal github pages website about (not just) free software, kernel and graphics.
 
 ## License
 
