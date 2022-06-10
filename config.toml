@@ -73,6 +73,7 @@ enable_post_view_navigation = true
 use_full_hack_font = true
 
 # TODO: update favicon
+
 favicon = "/favicon_128x128.png"
 favicon_mimetype = "image/png"
 preview_image = "/favicon_450x450.png"
