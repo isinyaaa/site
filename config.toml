@@ -72,7 +72,9 @@ enable_post_view_navigation = true
 # Defaults to false.
 use_full_hack_font = true
 
-# TODO: update favicon
+repo="isinyaaa/site"
+repo_id="R_kgDOGJiFVA"
+category_id="DIC_kwDOGJiFVM4B_SNz"
 
 favicon = "/favicon_128x128.png"
 favicon_mimetype = "image/png"
