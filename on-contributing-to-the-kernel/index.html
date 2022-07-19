@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>On contributing to the kernel</title>
+
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Isabella Basso">
+
+    <meta name="theme-color" content="#A052F2">
+
+    
+    <link rel="stylesheet" href="https://crosscat.me/style.css">
+    <link rel="stylesheet" href="https://crosscat.me/color/purple.css">
+
+    <link rel="stylesheet" href="https://crosscat.me/font-hack.css">
+
+
+    
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://crosscat.me/rss.xml">
+    
+        <link rel="shortcut icon" type="image&#x2F;png" href="/favicon_128x128.png">
+    
+    </head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://crosscat.me" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            crosscat.me
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://crosscat.me"></a></li>
+            
+                <li><a href="https://crosscat.me/about">about</a></li>
+            
+                <li><a href="https://github.com/isinyaaa/isinyaaa.github.io" target="_blank" rel="noopener noreferrer">source</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://crosscat.me/on-contributing-to-the-kernel/">On contributing to the kernel</a></h1>
+    
+        <div class="post-meta-inline">
+            
+    <span class="post-date">
+            2021-10-04
+        
+    </span>
+
+            
+    <span class="post-read-time">
+        :: 9 min read
+    </span>
+
+
+            <!-- TODO: rethink how tags look -->
+            <br>
+            
+        <span class="post-tags-inline"><a class="post-tag" href="https://crosscat.me/tags/kernel/">#kernel</a> <a class="post-tag" href="https://crosscat.me/tags/starters/">#starters</a> <a class="post-tag" href="https://crosscat.me/tags/linux/">#linux</a></span>
+    
+        </div>
+    
+
+
+        
+        <div class="post-content">
+            <p>So, for starters, the Linux Kernel is the most beautiful thing ever <del>if you
+don’t mind a little mess, I mean…</del> <strong>no, really</strong>, it’s beautiful, and I’ll
+prove it to you! All you need to do is clone the “main” tree:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">git</span><span> clone https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+</span></code></pre>
+<p>Well, actually, this isn’t <em>really</em> the main thing, but it’s <em>one of them</em>,
+together with the one you probably know best (if you’re a rolling release Linux
+user, that is)
+<a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux">Greg Kroah-Hartman’s tree</a>
+and that’s only half the story, as each Linux distribution likes to put their
+own flavor of commits on top of that.</p>
+<span id="continue-reading"></span>
+
+<div class="callout">
+  <div class="callout-body">
+    <p>A useful tip if you want to ‘check out’ both trees is to append remotes to
+your cloned repo, as it doesn’t make sense to clone 2 GB repos that share 90%
+of their code ‘just because’… If you don’t know how to do that it goes on
+the lines of:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">git</span><span> remote add X https://link.to.x/git/repo.git
+</span><span style="color:#bf616a;">git</span><span> fetch X
+</span><span style="color:#bf616a;">git</span><span> checkout X/master
+</span></code></pre>
+
+  </div>
+</div>
+<p>Once you have all that, I’d appreciate it if you could take the time and just
+peer at the massive <code>git log</code> of this thing (I personally like using the Git
+Graph extension on VScode/VScodium):</p>
+<p><img src="/kernel-contrib/kernel_graph.png" alt="kernel_graph.png" /></p>
+<p>I mean, we have almost 1.1mi commits and some 10k developers working on it, all
+from different backgrounds and places, a couple hundred from competing
+companies even, and they all come together here to code for this project.</p>
+<p>I’m not gonna lie and tell you they all love it, of course a lot of them only
+do this for the money, but even if you can’t find the beauty in this huge
+effort of human collaboration, there’s the sheer power of it to be admired… And
+if you think it’s probably the fruit of a lawsuit in the first place one can
+only really wonder how important of a role licenses have played so far… But
+enough talk!</p>
+<h2 id="contributions">Contributions<a class="zola-anchor" href="#contributions" aria-label="Anchor link for: contributions">⌗</a></h2>
+<p>I think it’d be pretty cool to have my name in there, I mean, it <strong>is</strong> a huge
+collaborative project, so your contributions probably aren’t going to stand out
+a lot, but I prefer thinking about my code potentially helping a couple hundred
+devices (maybe even thousands? Who knows!), or just thinking that you’ll
+forever have your name in the list of contributors of <strong>the largest open-source
+project ever</strong> 😲. So, with that said, how can you have your little, humble,
+commit in there?</p>
+<h3 id="what-do-they-look-like">What do they look like?<a class="zola-anchor" href="#what-do-they-look-like" aria-label="Anchor link for: what-do-they-look-like">⌗</a></h3>
+<p>Well, each commit for the Kernel is called a <em>patch</em>, and you can pretty much
+think of it as a minimal piece of code that has a very well-aimed goal, such as
+a fix for a processor X or to add compatibility to a weird phone Y, or even to
+add some tests for some part of the code that maybe forgotten by mankind.</p>
+<p>And why should this be <em>minimal</em>? I mean, people <strong>do</strong> comment on kernel code,
+and they will also add some verbose names and whatnot… But their <strong>diffs</strong> must
+be kept to a minimum! No one would dare “fix random whitespace in file X”, not
+in a kernel patch.</p>
+<p>The reasoning here is simple: we want to minimise the amount of effort that
+it’d take a maintainer to read through the changes we’re proposing. The less
+unnecessary stuff, the better!</p>
+<p>Then you can argue that the examples I gave don’t seem minimal at all! How can
+one add compatibility to a whole new piece of hardware with a single commit?
+Well, I lied… You probably can’t do ‘a patch’ for this. We’re actually talking
+about a <em>patch series</em>, think of it like your branch of commits, and then each
+commit is a patch, very minimal, very focused, but we’re thinking big, and our
+series is all about that final goal!</p>
+<p>Another very important principle is that commits have to be <em>descriptive</em>, and
+that’s a real pain to learn, I swear I’m trying, but it never seems enough. I
+don’t want to sound dumb on the internet, you probably don’t want it either, so
+being thorough without being verbose ends up being a real challenge! You have
+to write <em>really well</em> and always keep in mind that those who’re reading may
+not have taken a look at what you’re editing, like, never (true story)!</p>
+<p>So a commit message for the kernel must have the main “pieces of code” you
+edited in the commit title, like <code>drm/amdgpu, mm</code> (that’d be a patch for the
+<code>mm</code> folder as well as the <code>drivers/gpu/drm/amd</code> folder) followed by the proper
+edit you made, such as <code>Fix oops in trace_cachefiles_mark_buried due to NULL object</code> (feel free to take a look at this commit:
+<a href="https://github.com/torvalds/linux/commit/6e9bfdcf0a3b1c8126878c21adcfc343f89d4a6a">6e9bfdc</a>).</p>
+<p>Some good practices should be known here: always write your commits
+imperatively! I mean, I’ve seen some messages where this isn’t so true, but at
+least the title must be this way, and then for the description you have a
+little more freedom I guess, just do it responsibly! ⚠️ Don’t dare stick some ‘I
+changed X for clarity’ ⚠️ (and keep your emojis safe at home, too!)</p>
+<h3 id="where-do-they-live">Where do they live?<a class="zola-anchor" href="#where-do-they-live" aria-label="Anchor link for: where-do-they-live">⌗</a></h3>
+<p>Well, this section isn’t so much about where the commits live (I mean, you
+already know that, right?) but actually, how <strong>you</strong> can find a piece of code
+to have your chance at contributing! And please do check out
+<a href="/on-contributing-to-open-source/">my next blog post</a> if you’re looking for
+such a thing (not necessarily related to the Linux kernel, by the way!).</p>
+<p>If you’re at some uni, you probably know someone that knows about a free
+software student group, or maybe there’s such a group on another uni close to
+where you are. Please, don’t feel afraid of contacting them! If you truly want
+to contribute your interest will show, and people oftentimes want to help!</p>
+<p>If you aren’t at some uni, I still think going through those student groups is
+rather safe, but you can try your hand at some alternatives, like the
+<a href="https://kernelnewbies.org/">kernel newbies’</a>
+advices (and they even have an IRC channel).</p>
+<p>It may seem very difficult at first, but hey, you’re reading through this, I
+think you can manage :D.</p>
+<h2 id="after-you-ve-made-your-patch-series">After you’ve made your patch series<a class="zola-anchor" href="#after-you-ve-made-your-patch-series" aria-label="Anchor link for: after-you-ve-made-your-patch-series">⌗</a></h2>
+<p>So, you’ve done it, you’ve made your own first kernel patch 2000 pro series X,
+I’m so proud! How do you get it accepted? Easy enough as it may seem, there are
+no pull requests around here: it’s mailing list time and your mom isn’t coming
+to get you 😢. But fear not, it’s <strong>really not</strong> as bad as it seems! Of course,
+you might have some trouble with setting up <code>git-send-email</code>, or even finding
+the maintainer for your piece of code, but in the end you’re just dealing with
+other people, who have also been where you are and also made many mistakes…</p>
+<h3 id="sending-e-mails-via-the-terminal">Sending e-mails via the terminal<a class="zola-anchor" href="#sending-e-mails-via-the-terminal" aria-label="Anchor link for: sending-e-mails-via-the-terminal">⌗</a></h3>
+<p>That really seems like the worst part of all: how the hell do you do this?
+Well, if you haven’t noticed yet, <code>git</code> was the <code>systemd</code> before <code>systemd</code> 😟.
+But jokes aside, setting up <code>git</code> to send e-mails is actually pretty easy, and
+I recommend following through <a href="https://git-send-email.io/">this site</a>’s
+tutorial (at least on how to set <code>git-send-email</code> up).</p>
+<h3 id="maintainers">Maintainers<a class="zola-anchor" href="#maintainers" aria-label="Anchor link for: maintainers">⌗</a></h3>
+<p>The first thing you should do before actually e-mailing your patch series is
+looking for the <em>maintainer</em> of the code you messed around with, as they’re the
+person who’s going to <em>yay</em> or <em>nay</em> your changes in the end. You can think of
+a maintainer as the “owner” of a piece of code (it’s not actually like this,
+but it might be easier to picture it this way…). You can use the
+<code>scripts/get_maintainer.pl</code> script to find this all-powerful being you should
+be mailing your patches to, and it <em>should</em> work most of the time, not always
+though, for these times you can <code>git blame</code> the file you’re working on to see
+who might be able to (a) review your changes, and; (b) help you with submitting
+it.</p>
+<h3 id="mailing-lists">Mailing lists<a class="zola-anchor" href="#mailing-lists" aria-label="Anchor link for: mailing-lists">⌗</a></h3>
+<p>You should also check out some mailing lists related to the subsystem you
+contributed such as the <code>dri-devel</code> or the <code>kunit</code> mailing lists. There is also
+the general kernel list <code>linux-kernel@vger.kernel.org</code>, which you should most
+likely always send your patches to.</p>
+<h3 id="sending-patches">Sending patches<a class="zola-anchor" href="#sending-patches" aria-label="Anchor link for: sending-patches">⌗</a></h3>
+<p>Now we can finally send our patches! It’s usually a good practice to format
+your patches before sending them by doing:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">git</span><span> format-patch -</span><span style="color:#b48ead;">[</span><span>n</span><span style="color:#b48ead;">]</span><span style="color:#bf616a;"> --cover-letter -o </span><span style="color:#b48ead;">[</span><span>output folder</span><span style="color:#b48ead;">]
+</span></code></pre>
+<p>Where <code>[n]</code> refers to the number of commits you want to include, and then we
+put them in a folder to keep them all together. The cover letter is a little
+something special we will use to explain the context behind our patch series.
+It will be sent as the first e-mail when you mail everything.</p>
+<p>Needless to say you actually have to edit the cover letter file for it to make
+any sense, right? Go on, I’ll wait 💅.</p>
+<p>Then, to send our e-mail(s), we have two main fields to fill out, the <code>to</code> and
+the <code>cc</code>. The <code>to</code> field is who you’re actually addressing with your patch
+series (like the maintainers!), and then the <code>cc</code> should be for all the lists
+(and maybe your friends, also!). The command should be a little like this:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">git</span><span> send-email </span><span style="color:#b48ead;">[</span><span>output folder</span><span style="color:#b48ead;">]</span><span style="color:#bf616a;"> --to</span><span>=&quot;</span><span style="color:#a3be8c;">maintainer@mail.com</span><span>&quot;</span><span style="color:#bf616a;"> --cc</span><span>=&quot;</span><span style="color:#a3be8c;">linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org,kunit-dev@googlegroups.com,~lkcamp/patches@lists.sr.ht</span><span>&quot;
+</span></code></pre>
+<p>See you on the next one 😊!</p>
+
+        </div>
+
+        
+    </div>
+
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright copyright--user"><div class="copyright"><span>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</span><span class="copyright-theme"><span class="copyright-theme-sep">:: </span>Theme is based on <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a></span><span class="copyright-theme-sep">:: </span><a href="/index.xml">rss</a></div></div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
