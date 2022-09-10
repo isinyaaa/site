@@ -1,4 +1,4 @@
 [submodule "themes/terminimal"]
 	path = themes/terminimal
 	url = https://github.com/isinyaaa/terminimal
-	branch = iloathereality-update
+	branch = dev
