@@ -21,11 +21,11 @@ about my Google Summer of Code project :). Let's hop into it!
 **DISCLAIMER:**
 
 For those who don't know, at the moment of writing this I also work with open
-source professionally at Red Hat, and of course it is a profitable business
-otherwise I'd be unemployed. Notice the context here is very different though
-as Red Hat not only provides source code for their projects but also many other
-products related to systems maintenance and services, such as customer
-assistance and maintenance of customer's product's infrastructure.
+source at Red Hat, and of course it is a profitable business otherwise I'd be
+unemployed. Notice the context here is very different though as Red Hat not
+only provides source code for their projects but also many other products
+related to systems maintenance and services, such as customer assistance and
+maintenance of customer's product's infrastructure.
 
 It should be also noted that this blog is **in no way what-so-ever related to
 Red Hat or any of its subsidiaries, and conveys my personal opinion only.**
