@@ -1,0 +1,1138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+      <title>crosscat</title>
+        <link>https://crosscat.me</link>
+        <description></description>
+        <generator>Zola</generator>
+        <language>en</language>
+        <atom:link href="https://crosscat.me/rss.xml" rel="self" type="application/rss+xml"/>
+        <lastBuildDate>Sat, 17 Sep 2022 00:00:00 +0000</lastBuildDate>
+        <item>
+            <title>GSoC &#x27;22 final report</title>
+            <pubDate>Sat, 10 Sep 2022 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/gsoc-22-final-report/</link>
+            <guid>https://crosscat.me/gsoc-22-final-report/</guid>
+            <description>&lt;p&gt;Like all things, Google Summer of Code, too, comes to an end.&lt;&#x2F;p&gt;
+&lt;p&gt;Now let’s go over what had to be done, what is done, and what’s left.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h2 id=&quot;what-had-to-be-done&quot;&gt;What had to be done&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-had-to-be-done&quot; aria-label=&quot;Anchor link for: what-had-to-be-done&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Well, this is rather easy for me to talk about, I’ll be on X.org’s Developers
+Conference soon, and full of motivations behind the work I’ve done.&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;Not just me, though! Me, Maíra and Magali (who might be familiar names to you
+already) will be there as well, and unfortunately Tales didn’t manage to get a
+visa due to bureaucracy layers no one dares to understand.&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Looking retrospectively, the project’s motivation boils down to Siqueira
+wanting to resolve an internal tension between AMD engineers and the weird code
+they have to manage, unit tests being like a safety valve. As I’ve talked about
+previously, GPU code can be quite &lt;em&gt;intense&lt;&#x2F;em&gt;, the DML module being a
+particularly fun example.&lt;&#x2F;p&gt;
+&lt;p&gt;No tests, just procedurally generated stuff, and there is so much to be done,
+really. Initially we proposed lots of tests, some docs, some refactoring, in my
+case specifically I wanted to make the
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;torvalds&#x2F;linux&#x2F;blob&#x2F;master&#x2F;drivers&#x2F;gpu&#x2F;drm&#x2F;amd&#x2F;display&#x2F;dc&#x2F;dml&#x2F;dcn20&#x2F;display_rq_dlg_calc_20.c&quot;&gt;&lt;code&gt;drivers&#x2F;gpu&#x2F;drm&#x2F;amd&#x2F;display&#x2F;dc&#x2F;dml&#x2F;dcn20&#x2F;display_rq_dlg_calc_20.c&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;
+(breathes &lt;strong&gt;heavily&lt;&#x2F;strong&gt;) look pretty.&lt;&#x2F;p&gt;
+&lt;p&gt;So…&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-was-actually-done&quot;&gt;What was actually done&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-was-actually-done&quot; aria-label=&quot;Anchor link for: what-was-actually-done&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;on-the-kernel&quot;&gt;On the Kernel&lt;a class=&quot;zola-anchor&quot; href=&quot;#on-the-kernel&quot; aria-label=&quot;Anchor link for: on-the-kernel&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Though we all had AMD code enhancement as a primary motivator, I actually did
+some unit tests, and at the end I was caught up in trying to understand what we
+were testing.&lt;&#x2F;p&gt;
+&lt;p&gt;Wasn’t my smartest move (what external contributor actually knows what an RQ
+DLG is? Difficult answers to find, really) but I learnt so much, apart from the
+fact it was really satisfying to document something so convoluted and full of
+internal “slang” (I mean product (code)names or acronyms). But I soon found out
+I’d be a terrible detective, as most of the things we had to test were simply
+unattainable for someone who didn’t have internal docs or lots of experience
+with real GPUs: most things in the DML submodule refer back to themselves, to
+GPU internals, or even to AMD “internals”.&lt;&#x2F;p&gt;
+&lt;p&gt;In the end there were some interesting results from the tests I was actually
+able to conclude, as follows:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;lore.kernel.org&#x2F;all&#x2F;20220811004010.61299-4-tales.aparecida@gmail.com&#x2F;&quot;&gt;drm&#x2F;amd&#x2F;display: Introduce Kunit tests to display_rq_dlg_calc_20&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;This was a single patch I’ve done on the unit tests. Of course there are
+lots more functions to be tested, but that comes in the next section :)&lt;&#x2F;p&gt;
+&lt;p&gt;We collectively discussed some alternatives to deal with the fact the
+functions being tested were all static, as will be discussed by Tales in his
+presentation at the Linux Plumbers Conference.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;lpc.events&#x2F;event&#x2F;16&#x2F;contributions&#x2F;1310&#x2F;&quot;&gt;LPC: How to introduce KUnit to physical device drivers?&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;There was also some documentation produced regarding the functions and
+structs involved in these tests, but they were not sent yet as they’re
+smaller changes and could be grouped in a patchset addressing this
+specifically.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;on-other-projects&quot;&gt;On other projects&lt;a class=&quot;zola-anchor&quot; href=&quot;#on-other-projects&quot; aria-label=&quot;Anchor link for: on-other-projects&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;h4 id=&quot;kworkflow&quot;&gt;KWorkflow&lt;a class=&quot;zola-anchor&quot; href=&quot;#kworkflow&quot; aria-label=&quot;Anchor link for: kworkflow&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;p&gt;KW (for the intimate) is a much needed and very interesting project, whom
+I tried my best to contribute to: I spent about a month and a half at the
+beginning of GSoC pushing it, to the point where I simply had no will to make
+my commit messages pretty or to respond maintainers.&lt;&#x2F;p&gt;
+&lt;p&gt;Lucky me the owner of the project is also my GSoC mentor, and he completely
+understood where I was at and that I’d not be able to accomplish the (optional)
+goals I had set for KW in my proposal.&lt;&#x2F;p&gt;
+&lt;p&gt;I really think this situation helped me understand better what is it that we’re
+doing when we contribute to free software, and that was the lesson I took.&lt;&#x2F;p&gt;
+&lt;p&gt;Anyhow, there were many contributions during this period, even though I didn’t
+finish many of them:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;614&quot;&gt;#614: Small code cleanup&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;615&quot;&gt;#615: Small build fixes&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;616&quot;&gt;#616: Separate build config from base kw config&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;617&quot;&gt;#617: Speedup build&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;619&quot;&gt;#619: Update CI&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;620&quot;&gt;#620: Add rsync dependency&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;631&quot;&gt;#631: Update KW setup&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h4 id=&quot;igt-gpu-tools&quot;&gt;IGT GPU Tools&lt;a class=&quot;zola-anchor&quot; href=&quot;#igt-gpu-tools&quot; aria-label=&quot;Anchor link for: igt-gpu-tools&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h4&gt;
+&lt;p&gt;Some things took a lot of our attention apart from the basic motivations of the
+project. As I was previously already working on IGT GPU Tools, I figured it’d
+be interesting to finish related work in that project. What good is making
+tests people aren’t going to use (or maintain?).&lt;&#x2F;p&gt;
+&lt;p&gt;IGT is widely used by the kernel graphics people. It mainly tests GPU stuff
+using userspace APIs, but also does some other interesting things, and we
+figured it’d be very cool to be able to run unit tests there: easy to integrate
+with the pre-existing CI, not too much headache to maintain as the KTAP specs
+get more stable, as well as not requiring so much effort from engineers that
+are already so used to it.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;lists.freedesktop.org&#x2F;archives&#x2F;igt-dev&#x2F;2022-August&#x2F;044928.html&quot;&gt;patchset: Add support for KUnit tests&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Whilst it was not so difficult from the purely technical point of view, this
+might be what helped me the most towards acquiring some intimacy with the C
+language. I felt it deep when I came back to the same code after a month or
+two and saw so much to improve on it, then stepped out again as I waited for
+v1 to be reviewed (which didn’t happen) and came back a while ago to write
+the v2 linked above.&lt;&#x2F;p&gt;
+&lt;p&gt;There were several challenges involved, specially for me: I started coding C
+because of the kernel, all I knew were C-like languages, and they were all
+masking some deep truth about computers to me: pretty error handling, easy to
+use strings, etc.&lt;&#x2F;p&gt;
+&lt;p&gt;I admit I wasn’t as ready for C as I thought, now that I understand it
+better, I can see that clearly. In the end this “quasi-traumatic” experience
+(and I mean the IGT patchset specifically) taught me a lot, and I’m very
+thankful for that opportunity (thanks, André!).&lt;&#x2F;p&gt;
+&lt;p&gt;Apart from the language itself, we also had to decide what would be supported
+in a KTAP parser, and that wasn’t easy.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h3 id=&quot;blog-posts&quot;&gt;Blog posts&lt;a class=&quot;zola-anchor&quot; href=&quot;#blog-posts&quot; aria-label=&quot;Anchor link for: blog-posts&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Well, for me personally this was the best part of this project, I really
+enjoy writing these things, I also enjoy receiving feedback – specially if
+it’s unasked :).&lt;&#x2F;p&gt;
+&lt;p&gt;If you know my blog you know I like to go the difficult route: to talk about
+the objective engineering experience might teach you a lot, but where’s the fun
+in that? Even now I’m trying to bring some subjective matters to this.&lt;&#x2F;p&gt;
+&lt;p&gt;Anyhow, I published two blog posts which you can check out here:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;crosscat.me&#x2F;real-contributions-with-real-money&#x2F;&quot;&gt;Real contributions with real money&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;crosscat.me&#x2F;an-introduction-to-the-linux-graphics-stack&#x2F;&quot;&gt;An introduction to the Linux graphics stack&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;And I actually made lots of contributions to the Flusp site as well, whose
+repository was used to review these posts, which I hope will be hosted there as
+long as they’re hosted on my own website.&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;95&quot;&gt;#95: add reports to site bar&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;100&quot;&gt;#100: config: add english feed button&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;101&quot;&gt;#101: clean and update Jekyll dependencies in Gemfile&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;102&quot;&gt;#102 (blog post review): Add graphics stack blog post&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;103&quot;&gt;#103 (blog post review): add Isabella’s GSoC blog post&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;107&quot;&gt;#107: _pages&#x2F;tutorials: add ‘kernel’ category for posts&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.com&#x2F;flusp&#x2F;flusp.gitlab.io&#x2F;-&#x2F;merge_requests&#x2F;117&quot;&gt;#117: Add last updated date and fix feed&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;h2 id=&quot;what-still-needs-to-be-done&quot;&gt;What still needs to be done&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-still-needs-to-be-done&quot; aria-label=&quot;Anchor link for: what-still-needs-to-be-done&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;As I pointed out previously, GPU code can be very interesting! So much so, that
+I purposefully didn’t attempt to rush what was left of my proposal at the end
+of GSoC. It might have been really satisfactory to end GSoC with everything
+accomplished, but if I learnt anything from undergrad it is that you should NOT
+rush what’s important to you.&lt;&#x2F;p&gt;
+&lt;p&gt;From what I’ve talked with my peers, there are two ways of seeing this project:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;GSoC is like a deal I made with Google and X.org to accomplish something
+until a due date and get money for it.&lt;&#x2F;p&gt;
+&lt;p&gt;This PoV is okay, but does it teach you anything new? I might as well have
+done some freelancing in that time period, would have got the money, and
+then I’d be very comfortable.&lt;&#x2F;p&gt;
+&lt;p&gt;But I believe there’s so much more to this experience, and that’s something
+Siqueira told us time and again, which brings me to a second, more
+wholesome way of seeing things:&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;GSoC is a sort of first commitment to a community.&lt;&#x2F;p&gt;
+&lt;p&gt;I know this doesn’t sound so clear as the first way of looking at things,
+but follow me on this:&lt;&#x2F;p&gt;
+&lt;p&gt;For the community, timing might be important, but it’s definitely not as
+important as doing solid, good work, and keep pushing it even if it’s not
+as quickly as you’d like.&lt;&#x2F;p&gt;
+&lt;p&gt;I got really burnt out from the first two years at Uni, started working,
+went to live by myself, all that young adult jazz. Trying to always keep up
+with everything was a real challenge, and though I didn’t always give my
+best, well I really tried.&lt;&#x2F;p&gt;
+&lt;p&gt;At first, I was really sad, almost spiraling out of everything
+software-related, but now I see things more clearly, and I’m trying to find
+a rhythm that I can work with, in which I can deliver what I want, and,
+most importantly, what I committed to.&lt;&#x2F;p&gt;
+&lt;p&gt;Going back to Siqueira, what he told us is that (translating loosely):&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;You got to make a dent in the community so that someone notices you.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;And now I see it more clearly.&lt;&#x2F;p&gt;
+&lt;p&gt;I’ve heard so many stories of people who engage on things like GSoC or
+Outreachy just to put it on their CV, then quit, but this is so much more
+important to me.&lt;&#x2F;p&gt;
+&lt;p&gt;I’ve already started making a career in free software, but the project I
+work on at the moment doesn’t allow me to interact so directly with some
+upstream or a community. I definitely want to improve in doing I enjoy and
+believe in, and if it takes some learning that’s only part of the journey
+to becoming a reliable member of some free software community.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;So, in concrete terms, what is there to finish?&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;First and foremost, the ongoing patchset for IGT needs lots of attention, as
+pointed by Michał Winiarski in this thread for example:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;lore.kernel.org&#x2F;all&#x2F;20220708203052.236290-10-maira.canal@usp.br&#x2F;&quot;&gt;Kernel lore archives: [PATCH v5 9&#x2F;9] drm: selftest: convert drm_mm selftest to KUnit&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Secondly, of course, finish the original proposal of testing the
+&lt;code&gt;dcn20&#x2F;display_rq_dlg_calc_20.c&lt;&#x2F;code&gt; file.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Might not sound like a lot, but those are really important things, and I’m sure
+they’ll keep me busy for some time.&lt;&#x2F;p&gt;
+&lt;p&gt;I was also pinged by some people to review their patches, and I want to get
+back to them soon.&lt;&#x2F;p&gt;
+&lt;p&gt;I’ve really been thinking a lot about giving back to the people that helped me
+get here, they were all awesome and I hope I can sow these same seeds and help
+fellow students become contributors as well. Just last week me and Maíra
+decided to try to get some people for a project on (fixing) coverage reports
+for the tests we wrote, but I might as well find another project for myself –
+probably related to XR, if you’re wondering, but I should write about that in
+the future :)&lt;&#x2F;p&gt;
+&lt;p&gt;That’s it, dear reader, thank you a lot for reading this through, see you on
+the next one!&lt;&#x2F;p&gt;
+</description>
+        </item>
+        <item>
+            <title>An introduction to the Linux graphics stack</title>
+            <pubDate>Sun, 24 Jul 2022 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/an-introduction-to-the-linux-graphics-stack/</link>
+            <guid>https://crosscat.me/an-introduction-to-the-linux-graphics-stack/</guid>
+            <description>&lt;p&gt;Unless you’ve run into a terrible problem with your GPU, I bet you never spent
+some time actually thinking about how we depend so heavily on graphics to
+actually do anything meaningful&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#0&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; on a computer: from small square blinking
+letters on a terminal to the utmost insanely complex games we play these days -
+in the context of Linux, it all depends on the DRI!&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;This should come as surprise to no one! And as you can probably imagine, the
+Linux graphics stack is comprised of many layers of abstractions, going from
+the largely abstracted userspace application that you’re running (a browser!)
+to the bytecode that is actually interpreted by your graphics card.&lt;&#x2F;p&gt;
+&lt;p&gt;These many abstractions are what allow us to have our glorious moments of being
+a hero (or maybe a villain, whatever you’re up to…) without even noticing
+what’s happening, and – most importantly – that allow game devs to make such
+complex games without having to worry about an awful lot of details. They’re
+really a marvel of engineering (!), but not by accident!&lt;&#x2F;p&gt;
+&lt;p&gt;All of those abstraction layers come with a history of their own&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#1&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;, and it’s
+kinda amazing that we can even have such a smooth experience with all of those,
+community-powered, beautifully thought out, moving pieces, twisting and turning
+in a life of their own.&lt;&#x2F;p&gt;
+&lt;p&gt;Just have a look at the beast we’ll be getting into! Feeling adventurous today,
+ain’t you? Well, fear not. It’s definitely not as bad as it seems, and there’s
+a lot of logic behind (most) things, so let’s go step by step :).&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;graphics-stack&#x2F;linux-graphics-stack.jpeg&quot; alt=&quot;Linux graphics stack (simplified)&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Though in most cases we start from the bottom of the stack and build our way
+towards the top, here I think it makes more sense for us to build it upside
+down, as that’s what we’re used to interacting with.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;On a funny thought experiment, maybe driver designers do live upside down,
+who knows…&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h2 id=&quot;window-servers-and-ttys&quot;&gt;Window servers and TTYs&lt;a class=&quot;zola-anchor&quot; href=&quot;#window-servers-and-ttys&quot; aria-label=&quot;Anchor link for: window-servers-and-ttys&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Even though Linux is generally regarded as a developer&#x2F;hacker OS, most modern
+distributions don’t require you to ever leave a graphic environment. Even if
+you love using the “terminal” on your distro, that’s simply a &lt;em&gt;terminal
+emulator&lt;&#x2F;em&gt;, which “simulates” using a modern TTY&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#6&quot;&gt;3&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;While TTYs are provided by the kernel itself, we need so-called &lt;em&gt;display
+servers&lt;&#x2F;em&gt; to actually render something more complex to the user’s screen. It
+acts as an intermediate, dealing with multiple applications wanting to draw
+things to the screen simultaneously.&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;As Linux was created during an era where computation was very much migrating
+from a model of “distributed access” (through time-sharing&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#6&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;), you can still
+peek into a TTY if you want to:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;On most distribution, pressing &lt;code&gt;CTRL+ALT+F1&lt;&#x2F;code&gt; (or &lt;code&gt;+F2&lt;&#x2F;code&gt;, &lt;code&gt;+F3&lt;&#x2F;code&gt; and so on) will
+take you to an old-school text-only display (of course one of these TTYs will
+also contain the display server session you began with).&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;graphics-stack&#x2F;teleprinter.jpeg&quot; alt=&quot;Classic teleprinter&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;graphics-stack&#x2F;tty-example.png&quot; alt=&quot;Modern TTY&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Check out a classic teleprinter in action in
+&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=2XLZ4Z8LpEE&quot;&gt;this video&lt;&#x2F;a&gt; or, if you want to
+understand the working details on Linux, check out
+&lt;a href=&quot;https:&#x2F;&#x2F;www.linusakesson.net&#x2F;programming&#x2F;tty&#x2F;index.php&quot;&gt;the TTY demystified blog post&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;But then, it seems logical that the graphic session we’re used to is one layer
+above the OS itself, which only provides those TTYs and, quite likely, the
+&lt;a href=&quot;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Application_binary_interface&quot;&gt;Application Binary Interface&lt;&#x2F;a&gt;
+(i.e. &lt;em&gt;ABI&lt;&#x2F;em&gt;) needed to “talk” to the OS, which is indeed the case (currently)
+:).&lt;&#x2F;p&gt;
+&lt;p&gt;In an X session for example, the X server (or your compositor) will render its
+windows through this ABI, and not directly through the hardware. Actually,
+the kernel ABI for hardware access through the Direct Rendering Infrastructure
+(&lt;em&gt;DRI&lt;&#x2F;em&gt;) is a recent development. Before it, the X server would simply access
+hardware directly, so all userspace software depended on it, and the slightest
+lack of coordination between applications could wreak havoc in the graphics
+card 😵!&lt;&#x2F;p&gt;
+&lt;p align=&quot;center&quot;&gt;
+  &lt;img align=&quot;left&quot; alt=&quot;GPU access before DRI&quot; src=&quot;&#x2F;graphics-stack&#x2F;no-DRI.png&quot; width=&quot;50%&quot;&gt;
+  &lt;img align=&quot;right&quot; alt=&quot;GPU access with DRI&quot; src=&quot;&#x2F;graphics-stack&#x2F;DRI-simple.png&quot; width=&quot;50%&quot;&gt;
+&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;The X server has many years of history and lots of “curious” design choices (to
+put it lightly). If you’re at all interested on understand it better, have a
+look at the
+&lt;a href=&quot;https:&#x2F;&#x2F;magcius.github.io&#x2F;xplain&#x2F;article&#x2F;x-basics.html&quot;&gt;xplain blog&lt;&#x2F;a&gt;!&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;But enough historic techno-babble! How does our application, then, render its
+stuff using a window server? The short answer is: it doesn’t!&lt;&#x2F;p&gt;
+&lt;p&gt;Actually, anything that wants to render elements that are independent of a
+window server will have to use a graphics API like &lt;strong&gt;OpenGL&lt;&#x2F;strong&gt;, and that’s where
+Mesa comes in!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;mesa-and-graphics-apis&quot;&gt;Mesa and graphics APIs&lt;a class=&quot;zola-anchor&quot; href=&quot;#mesa-and-graphics-apis&quot; aria-label=&quot;Anchor link for: mesa-and-graphics-apis&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;First, notice that we’re already down a level: the window server shows us
+cute windows and deals with user input in that interface, wonderful! But then I
+open Minecraft, and we’re already asking for 3D objects which the window server
+can’t possibly handle effectively, so
+&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.freedesktop.org&#x2F;mesa&#x2F;mesa&quot;&gt;Mesa&lt;&#x2F;a&gt; was introduced to provide a
+second route for applications to send their complex commands directly to the
+kernel, without the need to go through the display sessions’ (&lt;em&gt;bloated and
+slow&lt;&#x2F;em&gt;) rendering mechanisms, which are quite often single-handedly optimized to
+show us application interfaces (the infamous GUIs).&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;As a side note, the X server is also OpenGL capable, and you can see this
+through its &lt;code&gt;glx*&lt;&#x2F;code&gt; API commands, or even some commands (ever heard of
+&lt;code&gt;glxgears&lt;&#x2F;code&gt;? 😏).&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;On a birds eye view, our (supposed) game will try to run its 3D routines, which
+are written in shader-speak (for example OpenGL’s, whose language is called
+&lt;code&gt;GLSL&lt;&#x2F;code&gt;), which Mesa handles for us, compiling and optimizing it for our
+specific GPU, then sending it to be run by the kernel, just like your window
+server does, but for anything!&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;An important point to notice here is that, of course, the window server is
+still needed for user interaction in our game. It will query and send user
+commands to the application, and will also handle windowing and displaying
+stuff (including our game, as its window is still managed by the window
+server), as well as dealing with many other system-related interactions that
+would be a nightmare for game devs to implement.&lt;&#x2F;p&gt;
+&lt;p&gt;Another important point is that writing user applications which don’t require
+using shaders would be a total nightmare without a display manager, as it
+provides many useful abstractions for that use case (which already covers &amp;gt;90%
+of the uses cases for most people).&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;We’re getting close! Next stop is: the Linux kernel!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-drm-and-kms-subsystems&quot;&gt;The DRM and KMS subsystems&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-drm-and-kms-subsystems&quot; aria-label=&quot;Anchor link for: the-drm-and-kms-subsystems&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;The Linux kernel is, of course, comprised of many moving parts, including
+inside the Direct Rendering Manager (&lt;em&gt;DRM&lt;&#x2F;em&gt;) itself, which I cannot possibly
+explain in this one blog post (sorry about that!).&lt;&#x2F;p&gt;
+&lt;p&gt;The DRM is addressed using &lt;code&gt;ioctl&lt;&#x2F;code&gt;s (short for &lt;em&gt;I&#x2F;O Control&lt;&#x2F;em&gt;), which are
+&lt;code&gt;syscall&lt;&#x2F;code&gt;s (short for &lt;em&gt;System Call&lt;&#x2F;em&gt;) used for device specific control, as
+providing generalist &lt;code&gt;syscall&lt;&#x2F;code&gt;s would be nearly impossible – it’s more
+feasible to create one &lt;code&gt;ioctl(device, function, parameters)&lt;&#x2F;code&gt; then treat this in
+a driver than to create 2000 &lt;code&gt;mygpu_do_something_syscall(parameters)&lt;&#x2F;code&gt; for
+“obvious” reasons.&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;For the inexperienced reader, it’s interesting to notice here that the approach
+of one &lt;code&gt;syscall&lt;&#x2F;code&gt; per driver-specific command would bloat the general kernel ABI
+with too many generally useless functions, as the large majority of them would
+be used for one and only one driver.&lt;&#x2F;p&gt;
+&lt;p&gt;Just for reference, in my kernel I have 465 &lt;code&gt;syscall&lt;&#x2F;code&gt;s as defined in the
+system manual. Putting this &lt;em&gt;vs&lt;&#x2F;em&gt; a simple estimate of &lt;em&gt;drivers in the kernel *
+commands only they use&lt;&#x2F;em&gt; should give you some perspective on the issue.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Just use &lt;code&gt;man syscalls | grep -E &#x27;.*\(2.\s+[0-9.]+&#x27; | wc -l&lt;&#x2F;code&gt; if you want to
+query the &lt;code&gt;syscall&lt;&#x2F;code&gt;s defined in your kernel.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Those &lt;code&gt;ioctl&lt;&#x2F;code&gt;s are then wrapped inside a
+&lt;a href=&quot;https:&#x2F;&#x2F;gitlab.freedesktop.org&#x2F;mesa&#x2F;drm&quot;&gt;&lt;code&gt;libdrm&lt;&#x2F;code&gt; library&lt;&#x2F;a&gt; that provides a
+more comprehensible interface for the poor Mesa developers, which would
+otherwise need to keep checking every &lt;code&gt;ioctl&lt;&#x2F;code&gt; they want to use for the
+&lt;a href=&quot;https:&#x2F;&#x2F;docs.kernel.org&#x2F;userspace-api&#x2F;media&#x2F;v4l&#x2F;user-func.html&quot;&gt;unusual macro names&lt;&#x2F;a&gt;
+provided by the kernel’s userspace API.&lt;&#x2F;p&gt;
+&lt;p&gt;One very shady aspect of graphics rendering that the DRM deals with is GPU
+memory management, and it does this through &lt;em&gt;two interfaces&lt;&#x2F;em&gt;, namely:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;GEM&lt;&#x2F;strong&gt; – short for &lt;em&gt;Graphics Execution Manager&lt;&#x2F;em&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;TTM&lt;&#x2F;strong&gt; – short for &lt;em&gt;Translation Table Maps&lt;&#x2F;em&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The older of those two is TTM, which was a generalist approach for memory
+management, and it provides literally everything anyone could ever hope for.
+That being said, TTM is regarded as &lt;strong&gt;too&lt;&#x2F;strong&gt; difficult to use&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#2&quot;&gt;4&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#3&quot;&gt;5&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; as it
+provides a gigantic API, and very convoluted must-have features that end up
+being unyielding. For instance, TTM’s &lt;strong&gt;fencing&lt;&#x2F;strong&gt; mechanism – which is
+responsible for coordinating memory access between the GPU and CPU, just like
+&lt;strong&gt;semaphores&lt;&#x2F;strong&gt; if you’re used to them at all – has a very odd interface. We
+could also talk about TTM’s general inefficiencies which have been noted time
+and time again, as well as its “wicked ways” of doing things, which abuse the
+DMA (short for &lt;em&gt;Direct Memory Access&lt;&#x2F;em&gt;) API for one (check out König’s talk for
+more&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#4&quot;&gt;6&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;).&lt;&#x2F;p&gt;
+&lt;p&gt;Just like evolution, an alternative to TTM had to come along, and that was our
+friend GEM – which was conceived by Intel, as a simplified interface for
+memory management. It’s much easier to use by comparison, but also much more
+simplified and thus, only fully attends Intel’s specific use case  – that is,
+integrated video cards&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#5&quot;&gt;7&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; –, as it’s limited to addressing memory shared by
+both GPU and CPU (no discrete video card support at all, really). It also won’t
+handle any fencing, and simply “wait” for the GPU to finish its thing before
+moving on, which is a no-no for those beefy discrete GPUs.&lt;&#x2F;p&gt;
+&lt;p&gt;Then, as anyone sane would much rather be dealing with GEM, &lt;del&gt;all software
+engineers fired themselves from other companies and went to Intel. I hear
+they’re currently working hard to deprecate TTM in an integrated graphics
+supremacy movement&lt;&#x2F;del&gt;. Jokes aside, what actually happened is that DRM drivers
+will usually implement the needed memory management (including fencing)
+functionality in TTM, but provide GEM-like APIs for those things, so that
+everyone ends up happy (except for the people implementing these interfaces, as
+they’re probably quite depressed).&lt;&#x2F;p&gt;
+&lt;p&gt;These memory related aspects are a rabbit hole of their own, and if you’d like
+to have a deeper look into this, I recommend these resources:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;en.m.wikipedia.org&#x2F;wiki&#x2F;Direct_Rendering_Manager&quot;&gt;wikipedia.com - DRM&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;blogs.igalia.com&#x2F;itoral&#x2F;2014&#x2F;07&#x2F;29&#x2F;a-brief-introduction-to-the-linux-graphics-stack&#x2F;&quot;&gt;blogs.igalia.com - Intro to Linux graphics stack&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;a href=&quot;https:&#x2F;&#x2F;studiopixl.com&#x2F;2017-05-13&#x2F;linux-graphic-stack-an-overview&quot;&gt;studiopxl.com - Linux graphics stack overview&lt;&#x2F;a&gt;&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;It’s important to notice, though, that kernel devs are working hard into making
+TTM nicer all around, as it’s used by too many drivers to simply, paraphrasing
+König, “be set on fire” and start a memory interface anew. If you want some
+perspective, take a look at Christian König’s amazing talk&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#4&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;, where he talks
+about TTM from the viewpoint of a maintainer.&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Notice, however, that the DRM is only responsible for graphics &lt;em&gt;rendering&lt;&#x2F;em&gt; and
+display mode-setting (that is, basically, setting resolution and refresh rate)
+is done in a separate (but related) subsystem, called &lt;strong&gt;KMS&lt;&#x2F;strong&gt; (short for
+&lt;em&gt;Kernel Mode Setting&lt;&#x2F;em&gt;).&lt;&#x2F;p&gt;
+&lt;p&gt;The KMS logically separates various aspects of image transmission, such as&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;connectors&lt;&#x2F;strong&gt; – basically outputs on your GPU&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;CRTCs&lt;&#x2F;strong&gt; – representing a controller that reads the final information
+(known as &lt;strong&gt;scanout buffer&lt;&#x2F;strong&gt; or &lt;strong&gt;framebuffer&lt;&#x2F;strong&gt;) to send to those connectors&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;encoders&lt;&#x2F;strong&gt; – how that signal should be transmitted through the connector&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;planes&lt;&#x2F;strong&gt; – which feed the CRTCs framebuffers with data&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;And you can actually find where this information is available by consulting the
+&lt;code&gt;&#x2F;sys&#x2F;class&#x2F;drm&lt;&#x2F;code&gt; folder. There you can see subdirectories referring to specific
+graphics cards (i.e. &lt;code&gt;card*&lt;&#x2F;code&gt;) and also their &lt;em&gt;render nodes&lt;&#x2F;em&gt;, which indicate
+their capabilities of executing &lt;em&gt;general programming&lt;&#x2F;em&gt; applications, like the
+ones in machine learning, which don’t depend on having a graphical output.
+Inside these subdirectories, then, you can see some files indicating things
+like &lt;strong&gt;connection status&lt;&#x2F;strong&gt; or &lt;strong&gt;mode list&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;For a quick overview, check out this image:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;graphics-stack&#x2F;linux-graphics-stack-full.png&quot; alt=&quot;Linux graphics stack&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I can already hear you say&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;OMG Isinya, that was a hell of a lot of information 😵.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;But hey, you just read it through (what a nerd)! On a following post I’ll talk
+about testing the kernel pieces of this puzzle, hope to see you then :).&lt;&#x2F;p&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;0&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;1&lt;&#x2F;sup&gt;
+&lt;p&gt;A small disclaimer: of course there are many disabled people which need
+other methods of interaction with a computer that don’t rely as heavily on
+graphics, and I do think it’s a huge problem that we don’t have alternatives
+for those people in a large majority of cases, as most software does not give
+the lightest thought to the vision impaired. I should talk more about this in
+the future but, for now, please don’t forget it’s an existing issue that
+needs addressing!&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;1&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;2&lt;&#x2F;sup&gt;
+&lt;p&gt;Which I might even talk about in another post – excuse me, but that
+requires a little too much research for the time I have currently.&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;6&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;3&lt;&#x2F;sup&gt;
+&lt;p&gt;A classical TTY (or &lt;em&gt;teleprinter&lt;&#x2F;em&gt; for the acquainted) used to be an
+endpoint for interaction with a central computer that held all the resources
+for users (we call that a &lt;em&gt;time-sharing&lt;&#x2F;em&gt; computer), and was actually not much
+used outside of that context. A terminal emulator would be called a &lt;em&gt;pseudo&lt;&#x2F;em&gt;
+TTY (PTY).&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;2&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;4&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;lwn.net&#x2F;Articles&#x2F;283793&#x2F;&quot;&gt;lwn.net - GEM v. TTM&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;3&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;5&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;dri.freedesktop.org&#x2F;docs&#x2F;drm&#x2F;gpu&#x2F;drm-mm.html&quot;&gt;dri.freedesktop.org - DRM Memory Management&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;4&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;6&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;watch?v=MG7_tUNKSt0&quot;&gt;youtube.com - the TTM memory manager&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;5&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;7&lt;&#x2F;sup&gt;
+&lt;p&gt;The attentive reader might have thought about Intel’s discrete video
+cards at this point, and as a matter of fact Intel is actually working with
+TTM to support those products. See:
+&lt;a href=&quot;https:&#x2F;&#x2F;www.phoronix.com&#x2F;scan.php?page=news_item&amp;amp;px=Linux-5.14-TTM-dGPUs-LMEM&quot;&gt;phoronix.com - Linux 5.14 enabling Intel graphics TTM usage for their dGPUs&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+</description>
+        </item>
+        <item>
+            <title>Real contributions with real money</title>
+            <pubDate>Mon, 13 Jun 2022 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/real-contributions-with-real-money/</link>
+            <guid>https://crosscat.me/real-contributions-with-real-money/</guid>
+            <description>&lt;p&gt;Recently I’ve heard from a friend that his professor simply doesn’t believe
+that free software should be profitable, so I’m making this blog post.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;Of course, I don’t &lt;em&gt;just&lt;&#x2F;em&gt; want to rub it in his face, I’m also here to talk
+about my Google Summer of Code project :). Let’s hop into it!&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;&lt;strong&gt;DISCLAIMER:&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;For those who don’t know, at the moment of writing this I also work with open
+source at Red Hat, and of course it is a profitable business otherwise I’d be
+unemployed. Notice the context here is very different though as Red Hat not
+only provides source code for their projects but also many other products
+related to systems maintenance and services, such as customer assistance and
+maintenance of customer’s product’s infrastructure.&lt;&#x2F;p&gt;
+&lt;p&gt;It should be also noted that this blog is &lt;strong&gt;in no way what-so-ever related to
+Red Hat or any of its subsidiaries, and conveys my personal opinion only.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Now we can proceed :).&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;For thy poor readers who don’t already know about this,
+&lt;a href=&quot;https:&#x2F;&#x2F;summerofcode.withgoogle.com&#x2F;&quot;&gt;Google Summer of Code&lt;&#x2F;a&gt; (GSoC for the
+intimate) is an annual initiative for encouraging people (mainly students) to
+contribute to open source software projects all around, and there are many
+organizations that take part on it, submitting their mentors’ ideas as possible
+projects, then parsing through to-be-contributors proposals.&lt;&#x2F;p&gt;
+&lt;p&gt;Let me explain this in more detail, so you can catch that carp next year:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;The X.Org Foundation published its mentors
+&lt;a href=&quot;https:&#x2F;&#x2F;www.x.org&#x2F;wiki&#x2F;SummerOfCodeIdeas&#x2F;&quot;&gt;ideas for projects&lt;&#x2F;a&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;My first mentor, Rodrigo Siqueira, who is also one of X.Org’s appointed
+mentors told me about this&lt;&#x2F;li&gt;
+&lt;li&gt;Then I made a proposal&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; that was very much aligned with his to X.Org in
+GSoC.&lt;&#x2F;li&gt;
+&lt;li&gt;Now we profit!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;By the way, I’ve already explained how you can find a local community and,
+possibly even mentors on them in a
+&lt;a href=&quot;&#x2F;on-contributting-to-open-source&#x2F;&quot;&gt;previous blog post&lt;&#x2F;a&gt;, so go check it out
+if you’re not really sure how to approach these situations.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;The most obvious ways Google has to incentivize contributions are, of course,
+through money, and also by utilizing their massive reputation to connect people
+(that is, contributors and mentors). Now we get a little more philosophical:
+why does Google, of all companies in the world, sponsor random people to
+contribute to open source?&lt;&#x2F;p&gt;
+&lt;p&gt;The implications of this tell us a lot about software engineering, idealistic
+thinking, and even capitalism itself!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;why-sponsor-something-free-as-in-free-beer&quot;&gt;Why sponsor something free (as in free beer)?&lt;a class=&quot;zola-anchor&quot; href=&quot;#why-sponsor-something-free-as-in-free-beer&quot; aria-label=&quot;Anchor link for: why-sponsor-something-free-as-in-free-beer&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;As you might already know, many of these projects exist not only for their own
+sake, but as reliable, auditable, building blocks for larger projects, or even
+as tools, making it very easy and cheap (money-wise and also time-wise) to
+create whatever you might want. So it happens that by having this sort of, at
+first glance, unreasonably undervalued (most times literally free!) tools we
+can build much more valuable software and&#x2F;or media at exponential rates,
+because the only thing holding us back is the knowledge to yield them.&lt;&#x2F;p&gt;
+&lt;p&gt;Then, as our current financial system much rather values competing alternatives
+in an open &lt;del&gt;battle&lt;&#x2F;del&gt; market, it makes a lot of sense for some of this stuff to
+be as widely available as possible.&lt;&#x2F;p&gt;
+&lt;p&gt;We, of course, can also look at this through idealistic lenses: free (libre)
+software objectively makes the world a better place because&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;we worry less about security and privacy violations as anyone can audit the
+source code we’re using and look for problems;&lt;&#x2F;li&gt;
+&lt;li&gt;we can make whatever changes we like to it (mind your licenses, though);&lt;&#x2F;li&gt;
+&lt;li&gt;but most importantly, &lt;strong&gt;we&lt;&#x2F;strong&gt; can make real social impact by improving such
+code, or adding missing functionality.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;That is to say that the real advantage in all of this is that &lt;strong&gt;we&lt;&#x2F;strong&gt; can make
+the world a better place for everyone, one commit at a time, and with almost no
+barriers to entry!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-downsides&quot;&gt;The downsides&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-downsides&quot; aria-label=&quot;Anchor link for: the-downsides&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;If you’d never thought about this, of course we have some problems here.&lt;&#x2F;p&gt;
+&lt;p&gt;First and foremost, the most obvious issue happens when such software is not
+maintained properly (maintainers may lack resources, for example), and as it
+might be used by many other projects we might have a broken dependency chain.
+This has happened
+&lt;a href=&quot;https:&#x2F;&#x2F;www.ncsc.gov.uk&#x2F;information&#x2F;log4j-vulnerability-what-everyone-needs-to-know&quot;&gt;recently with Log4j&lt;&#x2F;a&gt;
+and it’s caused a huge turmoil.&lt;&#x2F;p&gt;
+&lt;p&gt;Still onto this issue, we’re never totally sure if the code has been audited
+properly. Sometimes maintainers also aren’t as experienced as we’d hope, and
+end up making mistakes.&lt;&#x2F;p&gt;
+&lt;p&gt;A huge chunk of this problem happens primarily when projects aren’t so
+interesting and have small user base, or when its maintainers lack appeal (e.g.
+they might be blunt on community interactions) and, as a consequence, cannot
+build a proper community around it.&lt;&#x2F;p&gt;
+&lt;p&gt;This is a problem that large corporations can usually deal with in their
+products, as they can just select competent developers and pay them good money
+to maintain literally depressing code bases.&lt;&#x2F;p&gt;
+&lt;p&gt;Another problem is having &lt;em&gt;bloated&lt;&#x2F;em&gt; or &lt;em&gt;unruly&lt;&#x2F;em&gt; software. Of course this isn’t
+exclusive to open source (just look at Microsoft Windows for example), but it
+can be made worse, as maintainers might have different views on what’s
+important and no consensus as to which path to follow.&lt;&#x2F;p&gt;
+&lt;p&gt;Using the Linux kernel as an example, even with Linus as the head of the
+project it still has had a history of too many ABI changes&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#2&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; &lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#3&quot;&gt;3&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; and still has many
+issues caused simply by leaving code “unattended” (i.e.
+&lt;a href=&quot;https:&#x2F;&#x2F;portswigger.net&#x2F;daily-swig&#x2F;ill-advised-research-on-linux-kernel-lands-computer-scientists-in-hot-water&quot;&gt;introduction of hypocrite commits&lt;&#x2F;a&gt;,
+or
+&lt;a href=&quot;https:&#x2F;&#x2F;lore.kernel.org&#x2F;all&#x2F;20211208012529.372478-1-isabbasso@riseup.net&#x2F;&quot;&gt;easy to solve compilation warnings that were simply overlooked&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;p&gt;This might have been a product of overworked maintainers who have no time to
+review every piece of every patch, coupled with their trust onto familiar
+developers who have no better ways to check if their contributions are up to a
+certain threshold than to run some scripts on them or wait for some CI to fail
+and warn them.&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;This might not be the full picture of upsides &lt;em&gt;vs&lt;&#x2F;em&gt; downsides, but it’s
+certainly one which I’ve been very exposed to recently, so that’s my take on
+it.&lt;&#x2F;p&gt;
+&lt;p&gt;I recommend having a look at
+&lt;a href=&quot;https:&#x2F;&#x2F;rosenzweig.io&#x2F;blog&#x2F;software-freedom-isnt-about-licenses-its-about-power.html&quot;&gt;Rosenzweig’s blog post&lt;&#x2F;a&gt;
+for a more in depth discussion on issues regarding licensing and open source
+software.&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;h2 id=&quot;giving-a-hand-to-our-beloved-projects&quot;&gt;Giving a hand to our beloved projects&lt;a class=&quot;zola-anchor&quot; href=&quot;#giving-a-hand-to-our-beloved-projects&quot; aria-label=&quot;Anchor link for: giving-a-hand-to-our-beloved-projects&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;With all of this in mind, I personally believe that as starters in this
+contribution journey the most valuable thing we can give back to maintainers is
+to provide fixes for overlooked problems, or even better, provide ways to help
+more experienced developers make better code.&lt;&#x2F;p&gt;
+&lt;p&gt;What do I mean with this? Simply put&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;If code breaks a lot, make a test for it!&lt;&#x2F;li&gt;
+&lt;li&gt;If it has too many small problems that should not be overlooked, fix them!&lt;&#x2F;li&gt;
+&lt;li&gt;If it misses documentation, understand it and upstream your newfound
+knowledge!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;It’s literally &lt;strong&gt;that simple&lt;&#x2F;strong&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;What gets to me is that those are usually very simple things, and a new
+contributor might want to make contributions as heavy as those they see
+maintainers making. But that’s just &lt;strong&gt;not realistic&lt;&#x2F;strong&gt; for most newbies.&lt;&#x2F;p&gt;
+&lt;p&gt;And of course it’s a lot less interesting to send PRs adding a test than it is
+to upstream emoji support for Intel graphics drivers, but you often gotta start
+small, kiddo.&lt;&#x2F;p&gt;
+&lt;p&gt;So, onto my GSoC project, what the hell am I even doing?&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;isinya-s-gsoc-101&quot;&gt;Isinya’s GSoC 101&lt;a class=&quot;zola-anchor&quot; href=&quot;#isinya-s-gsoc-101&quot; aria-label=&quot;Anchor link for: isinya-s-gsoc-101&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;As alluded to above, I’m adding tests to graphics drivers in the kernel.
+Specifically to the AMDGPU driver, which is a ginourmous beast of a thing,
+being literally the
+&lt;a href=&quot;https:&#x2F;&#x2F;www.phoronix.com&#x2F;scan.php?page=news_item&amp;amp;px=AMDGPU-Closing-4-Million&quot;&gt;largest in the Linux kernel currently&lt;&#x2F;a&gt;.
+Of course that with great powers come great headaches and so it happens that
+the AMD driver for its GPUs has many shady pieces of code, and a core
+representative of which is its DML submodule that, roughly speaking, is
+responsible for providing the absolute best timing values for internal GPU
+components, and it achieves this through a series of
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;torvalds&#x2F;linux&#x2F;blob&#x2F;master&#x2F;drivers&#x2F;gpu&#x2F;drm&#x2F;amd&#x2F;display&#x2F;dc&#x2F;dml&#x2F;dcn20&#x2F;display_rq_dlg_calc_20.c&quot;&gt;unorthodox&lt;&#x2F;a&gt;
+floating point calculations.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;For the matter, I’ll specifically be working with this file, wish me luck!&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;!--TODO: missing references
+For starters, it wasn&#x27;t even written by human hands. This submodule, my friends,
+was procedurally generated! --&gt;
+&lt;p&gt;Another thing that makes it an absolute nightmare to deal with is that floating
+point routines are simply not welcomed in
+&lt;a href=&quot;https:&#x2F;&#x2F;stackoverflow.com&#x2F;questions&#x2F;13886338&#x2F;use-of-floating-point-in-the-linux-kernel&quot;&gt;Linux’s kernel code&lt;&#x2F;a&gt;.
+No one likes to even review that.&lt;&#x2F;p&gt;
+
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;Of course some kernels (like Window’s) do have floating point support, and
+there’s no strong argument to not have it nowadays, as modern CPUs are pretty
+well optimized for this – just look at modern SIMD instruction sets for
+example (SSE2 onwards) –, and as a matter of fact, modern GPUs can perform
+just the same whether we’re using them for integers or floating point numbers!&lt;&#x2F;p&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;!-- TODO: get a better reference for that --&gt;
+&lt;p&gt;All of this conspires to a perpetual state of “just let it be”
+(&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;torvalds&#x2F;linux&#x2F;blob&#x2F;master&#x2F;drivers&#x2F;gpu&#x2F;drm&#x2F;amd&#x2F;display&#x2F;dc&#x2F;dml&#x2F;dcn20&#x2F;display_rq_dlg_calc_20.c#L56&quot;&gt;perpetuated by the engineers themselves…&lt;&#x2F;a&gt;),
+and we end up with bloated, hard-to-read routines, which are unfortunately core
+to their most cutting-edge GPUs.&lt;&#x2F;p&gt;
+&lt;p&gt;Such is the rabbit hole I got into! But not alone, mind you,
+&lt;a href=&quot;https:&#x2F;&#x2F;mairacanal.github.io&#x2F;gsoc-22&#x2F;&quot;&gt;Maíra Canal&lt;&#x2F;a&gt; and
+&lt;a href=&quot;https:&#x2F;&#x2F;tales-aparecida.github.io&#x2F;tales-tips-and-tricks&#x2F;posts&#x2F;gsoc-report-1&#x2F;&quot;&gt;Thales Aparecida&lt;&#x2F;a&gt;
+will be joining me for lots of &lt;del&gt;crying in the bathroom&lt;&#x2F;del&gt; I mean &lt;strong&gt;FUN&lt;&#x2F;strong&gt;! Lots
+of fun! &lt;a href=&quot;https:&#x2F;&#x2F;magalilemes.github.io&#x2F;&quot;&gt;Magali Lemes&lt;&#x2F;a&gt; will also be joining our
+party while doing her final work for undergrad, so stay tuned :).&lt;&#x2F;p&gt;
+&lt;p&gt;I also managed to clone my mentor, Rodrigo Siqueira, and now I have three!
+Starring: &lt;a href=&quot;https:&#x2F;&#x2F;melissawen.github.io&#x2F;&quot;&gt;Melissa Wen&lt;&#x2F;a&gt; and
+&lt;a href=&quot;https:&#x2F;&#x2F;andrealmeid.com&#x2F;&quot;&gt;André Almeida&lt;&#x2F;a&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;I hope to learn a lot, being in such great company, and with them, we should be
+able to at least “sweep” some piles of sand from under AMD’s GPU driver carpet
+(or so I hope).&lt;&#x2F;p&gt;
+&lt;p&gt;If you’re wondering what exactly we’re proposing, you can look at my project
+submission&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;, but in short we should be creating tests for some DML files,
+which is a task that in itself already encompasses many technical obstacles,
+like testing in real hardware, or mocking it, and also ensuring that these
+tests are compatible with IGT, which I’ll talk about in my next blog post.
+We’re also concerned with generating coverage reports for the tests,
+refactoring these monstrous files, and documenting them better.&lt;&#x2F;p&gt;
+&lt;p&gt;Last but not least, GSoC also appreciates community presence, so you should see
+more stuff around here, and I’ve also set up an IRC bouncer to stay up-to-date
+24&#x2F;7 with some communities (ping me [isinyaaa] anytime on #dri-devel if you
+wish 😊).&lt;&#x2F;p&gt;
+&lt;p&gt;See you later alligator!&lt;&#x2F;p&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;1&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;1&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;summerofcode.withgoogle.com&#x2F;programs&#x2F;2022&#x2F;projects&#x2F;6AoBcunH&quot;&gt;My GSoC proposal&lt;&#x2F;a&gt;.
+If you want to see it in full, just ping me and I’ll be happy to share :).&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;2&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;2&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;lvc&#x2F;kernel-abi-tracker&quot;&gt;Kernel ABI tracker&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;3&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;3&lt;&#x2F;sup&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;abi-laboratory.pro&#x2F;?view=timeline&amp;amp;l=linux&quot;&gt;ABI tracker preview (outdated)&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+</description>
+        </item>
+        <item>
+            <title>On contributing to open source</title>
+            <pubDate>Sun, 12 Dec 2021 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/on-contributing-to-open-source/</link>
+            <guid>https://crosscat.me/on-contributing-to-open-source/</guid>
+            <description>&lt;p&gt;Alright, so you came for another one of Isinya’s soap operas! I’m excited to
+have you here, stranger :)&lt;&#x2F;p&gt;
+&lt;p&gt;Today, let’s &lt;strong&gt;not&lt;&#x2F;strong&gt; talk about the kernel, instead, I want to help you
+understand how &lt;strong&gt;you&lt;&#x2F;strong&gt; can be part of open source communities.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h2 id=&quot;context&quot;&gt;Context&lt;a class=&quot;zola-anchor&quot; href=&quot;#context&quot; aria-label=&quot;Anchor link for: context&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;So, before I was here lecturing you on the kernel, I was just your average Arch
+user: system broke, fixed system, me happy. But (maybe) with a twist, in that I
+eventually started enjoying having it broken, and who doesn’t! I mean… It’s
+only a problem when you have that assignment for tomorrow afternoon and your
+machine just won’t boot up 😢. But you can learn a lot from an experience like
+this, so I think it ends up being pretty interesting in the end!&lt;&#x2F;p&gt;
+&lt;p&gt;After I started working as a developer, I learned that I wasn’t as bad at
+coding as I once thought, so I started piecing a lot of these experiences
+together and came to the conclusion that, you know… Python development is okay
+and all, but after you’ve done plenty with a high-level language like this, at
+least for me, it got &lt;em&gt;pretty boring&lt;&#x2F;em&gt; (to put it mildly).&lt;&#x2F;p&gt;
+&lt;p&gt;Then I went on a journey looking for &lt;strong&gt;something&lt;&#x2F;strong&gt; that might give me that
+feeling that you’re doing something &lt;em&gt;cool&lt;&#x2F;em&gt; – of course I’m oversimplifying
+things, but this isn’t too far off reality, to be honest. At first, I was
+thinking about something related to game development, in C++ maybe, or even
+someplace to exercise my algorithmic skills (and please, do have a look at
+&lt;a href=&quot;https:&#x2F;&#x2F;projecteuler.net&#x2F;&quot;&gt;project Euler&lt;&#x2F;a&gt; if that’s your thing!) but again and
+again I kept having that hollow-ish feeling, because those projects aren’t
+&lt;strong&gt;that&lt;&#x2F;strong&gt; useful (practically speaking, that is), and then it all feels like a
+hobby, which isn’t exactly the best thing when you’re really busy. In short, I
+felt like I was &lt;strong&gt;wasting time&lt;&#x2F;strong&gt;. I ended up with one conclusion though: that
+maybe what I wanted after all was to contribute to something &lt;strong&gt;real&lt;&#x2F;strong&gt;, and by
+that I mean a &lt;em&gt;real open source project&lt;&#x2F;em&gt;, that people use and contribute to and
+that can &lt;strong&gt;help you&lt;&#x2F;strong&gt; truly.&lt;&#x2F;p&gt;
+&lt;p&gt;But then there’s a huge question that pops up right in front of you:&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;how-to-start-contributing-to-open-source&quot;&gt;How to start contributing to open-source?&lt;a class=&quot;zola-anchor&quot; href=&quot;#how-to-start-contributing-to-open-source&quot; aria-label=&quot;Anchor link for: how-to-start-contributing-to-open-source&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Unfortunately, I don’t think I can answer that once and for all… I mean, it’s
+not the same for everybody: you may be interested in data science or quantum
+computing (both of which I know nothing about!). And the processes for
+contributing might be radically different as well. But then I can tell you
+&lt;em&gt;how&lt;&#x2F;em&gt; to look for something to start contributing, and then someone in that
+field can help you.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;looking-for-a-project&quot;&gt;Looking for a project&lt;a class=&quot;zola-anchor&quot; href=&quot;#looking-for-a-project&quot; aria-label=&quot;Anchor link for: looking-for-a-project&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Just looking up projects on GitHub can get pretty boring pretty soon, so I
+suggest you look for an organisation that makes projects you look up to
+(personal examples: &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;llvm&quot;&gt;llvm&lt;&#x2F;a&gt;,
+rust projects like &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;gfx-rs&quot;&gt;this one&lt;&#x2F;a&gt;,
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;KhronosGroup&quot;&gt;Khronos Group&lt;&#x2F;a&gt;, etc…), and try to find
+someone that is accessible in there. I, for example, talked with a couple guys
+from Google and even a girl from Collabora but actually a really nice place to
+look for those people, again, is in your local community!&lt;&#x2F;p&gt;
+&lt;p&gt;Try to speak with your peers or others who might know a project that needs some
+love, maybe even a project of their own, or they might know someone close by
+who might be able to help you directly (that’s how I met my mentor)!&lt;&#x2F;p&gt;
+&lt;p&gt;To be honest the biggest barrier in these cases (apart from taking the first
+step) is the language barrier. But if you read it up to here I think you are
+fit for the job :).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;learning-the-basics&quot;&gt;Learning the basics&lt;a class=&quot;zola-anchor&quot; href=&quot;#learning-the-basics&quot; aria-label=&quot;Anchor link for: learning-the-basics&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;But then you might run into the same problem I did: you’re not sure how you can
+learn all those cool things, and it seems sooo overwhelming, because usually
+there is no clear path to learn it all.&lt;&#x2F;p&gt;
+&lt;p&gt;Well, for that you’re gonna have to face the facts: People build their
+expertise with time, and if you keep that in mind you might be able to overcome
+those fears! I have a little mantra of mine as well:&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;You just have to learn the basics 😌&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Anything you learn at this point can be a building block for contributing. You
+can ask someone in your field of interest if they can help or maybe just look
+for some content online.&lt;&#x2F;p&gt;
+&lt;p&gt;So, at this stage it’s also interesting to take part in events like hackathons,
+as you can get an overview of the contribution process for a particular project
+in your field of interest.&lt;&#x2F;p&gt;
+&lt;p&gt;I, for example, wasn’t so thrilled about the Linux Kernel before I actually
+went to a hackathon focusing on it, and then I saw there’s just so much to do!
+It gives me that “rush” of solving problems with real hardware, and dealing
+directly with those things I always found so cool about computers, plus there’s
+an awesome, gigantic, open community, and I think this is super amazing if
+you’re trying to get started :).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;on-sending-a-pr&quot;&gt;On sending a “PR”&lt;a class=&quot;zola-anchor&quot; href=&quot;#on-sending-a-pr&quot; aria-label=&quot;Anchor link for: on-sending-a-pr&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;If you aren’t used to Git(hub|lab)land speak you might have no idea what I’m
+talking about, so let me clarify a bit.&lt;&#x2F;p&gt;
+&lt;p&gt;There are basically &lt;strong&gt;two&lt;&#x2F;strong&gt; main ways of contributing to projects, whether
+they’re open-source or not:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;There are the mailing lists, which I’ve talked about in the
+&lt;a href=&quot;&#x2F;on-contributing-to-the-kernel&#x2F;&quot;&gt;previous post&lt;&#x2F;a&gt; (check it out if you haven’t
+already!).&lt;&#x2F;li&gt;
+&lt;li&gt;Then there are the &lt;strong&gt;PR&lt;&#x2F;strong&gt;s (that’s short for &lt;em&gt;pull request&lt;&#x2F;em&gt;). This is the most
+common way of contributing to open-source nowadays, you basically take the
+project you want to contribute from some point of interest and then add your
+code on top, on another version of the project which is basically its copy
+(we call that a &lt;em&gt;fork&lt;&#x2F;em&gt;), and when you’re done you can open a PR so that
+contributors can review your code and possibly accept it.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;So, in this post I’ll talk a little more about sending PRs. This is pretty
+straightforward to be honest, specially when compared to the mailing lists.
+There are a few ways this can happen:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Say, you might be using a program, and then you notice it behaves strange for
+some inputs, or maybe it often crashes on your system, and you know that’s
+open-source, so you can open an &lt;em&gt;issue&lt;&#x2F;em&gt; (and that’s another cool thing from
+the Git* websites), now this might lead you up a discussion where you think
+you can actually solve the issue, or maybe just complement documentation,
+which means it’s PR time!&lt;&#x2F;li&gt;
+&lt;li&gt;Another thing that might happen is you’re working in a project with some
+friends&#x2F;colleagues, and they prefer that mode of contribution, as it might be
+preferable to having a lot of people committing changes directly to the main
+tree.&lt;&#x2F;li&gt;
+&lt;li&gt;Or you can even take a random issue from a project you like and give that a
+try! That’s really cool too!&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Something that’s really important, though, is to always try and be polite
+with the people you’re dealing in these projects, as they can (and do) often
+get stressed out from bad interactions, or just want to be as straightforward
+as possible in their ways in order to be efficient – remember that this may
+be their job, or it may not! You don’t really know what they’re going through
+or if they even have the time to look at your code…&lt;&#x2F;p&gt;
+&lt;p&gt;If you want an insider look into this issue check out
+&lt;a href=&quot;https:&#x2F;&#x2F;snarky.ca&#x2F;the-social-contract-of-open-source&#x2F;&quot;&gt;Brett Cannon’s post&#x2F;talk on this very subject&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;h3 id=&quot;contribution-example&quot;&gt;Contribution example&lt;a class=&quot;zola-anchor&quot; href=&quot;#contribution-example&quot; aria-label=&quot;Anchor link for: contribution-example&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Now, in practice, this might be a little more involved, so I’ll try to
+illustrate a personal example:&lt;&#x2F;p&gt;
+&lt;hr &#x2F;&gt;
+&lt;p&gt;My mentor co-created a
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&quot;&gt;really cool project&lt;&#x2F;a&gt;
+that helps in kernel development workflow (thus “KWorkflow”, or “kw” for the
+intimate), with all sorts of tools. So as I’m getting started on that he
+suggested that I had a look at his project and tried adopting it in my daily
+hacking. But then I use a different shell than Linux’s “usual” (I use fish
+btw), and kw isn’t really meant to be used that way, so I ended up having some
+weird problems. Long story short, I opened
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;issues&#x2F;473&quot;&gt;an issue&lt;&#x2F;a&gt;
+about it, and that’s &lt;strong&gt;really&lt;&#x2F;strong&gt; simple! Just click on that button in the
+“issues” tab and voilà!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;kernel-contrib&#x2F;new_issue.png&quot; alt=&quot;new_issue.png&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Then, shortly after, I tried having my hand at a first contribution to the
+project!&lt;&#x2F;p&gt;
+&lt;p&gt;So, I pinpointed a potential source for the problem with my mentor’s help –
+which isn’t documented, unfortunately, but check out
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;microsoft&#x2F;vscode-python&#x2F;issues&#x2F;15969&quot;&gt;this example&lt;&#x2F;a&gt; or
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;hrkfdn&#x2F;ncspot&#x2F;issues&#x2F;579&quot;&gt;this one&lt;&#x2F;a&gt; to see how it might go
+about :). Next thing you do is fix the problem:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code&gt;git clone&lt;&#x2F;code&gt; the repo, of course&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;check for some &lt;code&gt;CONTRIBUTING.md&lt;&#x2F;code&gt; file, or if there are any guidelines for
+contribution, that might help you a lot!&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Then you might find out that’s a single line fix, or maybe you need a whole
+new file to support whatever you need! Whatever you find appropriate :) just
+go on with it.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Now you should probably change your working branch to something more in line
+with the work you’re doing:&lt;&#x2F;p&gt;
+&lt;p&gt;Maybe call it &lt;code&gt;hotfix-issue-name&lt;&#x2F;code&gt;, or something like that.&lt;&#x2F;p&gt;
+&lt;p&gt;Just in case you don’t know, to change branches you do &lt;code&gt;git checkout [branch-name]&lt;&#x2F;code&gt;, if you’re creating a new branch you have to use the &lt;code&gt;-b&lt;&#x2F;code&gt;
+flag as well (&lt;code&gt;git checkout -b [branch-name]&lt;&#x2F;code&gt;).&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Before you commit anything, try to have a look at the project’s &lt;code&gt;git log&lt;&#x2F;code&gt; to
+check out for any patterns – if the project is big there’s a good chance
+they do something, and it may be similar to the Linux kernel’s way even!&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Now you can commit your changes!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;git add [files-I-changed]&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;git commit&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Then you fork the project!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;kernel-contrib&#x2F;fork.png&quot; alt=&quot;fork.png&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Now add your personal remote, as that’s where you’ll be pushing your commits
+to:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;git remote add [remote-name] [link-of-your-fork]&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;PS: The remote name is up to you, just don’t use &lt;code&gt;origin&lt;&#x2F;code&gt; as that’s probably being used by the original remote.&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Then push changes (to your remote of course!!!!!!)&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;code&gt;git push [remote-name] [branch-name]&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;Now you can open your PR&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;Unfortunately every Git* website will have its own flavour to this process,
+but it’s pretty straight forward, actually :)&lt;&#x2F;p&gt;
+&lt;p&gt;Also, don’t PR Linux, your contribution will be politely &lt;em&gt;ignored&lt;&#x2F;em&gt; if you do
+that!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;kernel-contrib&#x2F;open-PR-github.png&quot; alt=&quot;open-PR-github.png&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Congrats!!!!!!! You’ve made it :D I’m so proud 😭&lt;&#x2F;p&gt;
+&lt;p&gt;Well, you didn’t make it just yet, actually! Have a look at my
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;kworkflow&#x2F;kworkflow&#x2F;pull&#x2F;474&quot;&gt;example’s PR&lt;&#x2F;a&gt;.
+That’s a lot of corrections they asked… So now you gotta keep up with
+maintainers’ requests! Be sure to check out how to
+&lt;a href=&quot;https:&#x2F;&#x2F;git-scm.com&#x2F;book&#x2F;en&#x2F;v2&#x2F;Git-Tools-Rewriting-History&quot;&gt;rebase interactively&lt;&#x2F;a&gt;
+(also
+&lt;a href=&quot;https:&#x2F;&#x2F;thoughtbot.com&#x2F;blog&#x2F;git-interactive-rebase-squash-amend-rewriting-history&quot;&gt;check this out&lt;&#x2F;a&gt;)
+and force pushes (just &lt;code&gt;git push [remote-name] [branch-name] -f&lt;&#x2F;code&gt;)!&lt;&#x2F;p&gt;
+&lt;p&gt;As per Brett’s talk you know that people might be busy (and that includes
+you!). So noone’s expecting you to be there 24&#x2F;7 replying to requests and
+updating your PR in real time… Just don’t forget about it (and be polite!) :)&lt;&#x2F;p&gt;
+</description>
+        </item>
+        <item>
+            <title>About</title>
+            <pubDate>Wed, 06 Oct 2021 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/about/</link>
+            <guid>https://crosscat.me/about/</guid>
+            <description>&lt;p&gt;I’m currently being introduced to the kernel graphics stack by my
+mentors, &lt;a href=&quot;https:&#x2F;&#x2F;siqueira.tech&#x2F;&quot;&gt;Rodrigo Siqueira&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;melissawen.github.io&#x2F;&quot;&gt;Melissa
+Web&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;andrealmeid.com&#x2F;&quot;&gt;André
+Almeida&lt;&#x2F;a&gt; (check them out!)&lt;&#x2F;p&gt;
+&lt;p&gt;I currently study at Universidade de São Paulo (USP), and you can check out my
+CV &lt;a href=&quot;&#x2F;CV.pdf&quot;&gt;over here&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In case you’re looking for it: here’s the &lt;a href=&quot;&#x2F;rss.xml&quot;&gt;RSS feed for this site&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Some cool facts about me:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;I love weird music!&lt;&#x2F;p&gt;
+&lt;p&gt;My usual mantra is that if it has more than 100k monthly listeners, it’s
+too mainstream…&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;I really like skateboarding, calligraphy, and pottery, too!&lt;&#x2F;p&gt;
+&lt;p&gt;I just didn’t say I’m good at any of them&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;I also like cats a lot but I’m a little allergic to them :(&lt;&#x2F;p&gt;
+&lt;p&gt;I’m working on that, though :)&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;li&gt;
+&lt;p&gt;I’m from a &lt;strong&gt;cold mountain town&lt;&#x2F;strong&gt; in the countryside of Rio de Janeiro&lt;&#x2F;p&gt;
+&lt;p&gt;Surprise: not everywhere in Rio is hot! Or sunny!&lt;&#x2F;p&gt;
+&lt;p&gt;We don’t even have beaches, how absurd!&lt;&#x2F;p&gt;
+&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</description>
+        </item>
+        <item>
+            <title>On contributing to the kernel</title>
+            <pubDate>Mon, 04 Oct 2021 00:00:00 +0000</pubDate>
+            <link>https://crosscat.me/on-contributing-to-the-kernel/</link>
+            <guid>https://crosscat.me/on-contributing-to-the-kernel/</guid>
+            <description>&lt;p&gt;So, for starters, the Linux Kernel is the most beautiful thing ever &lt;del&gt;if you
+don’t mind a little mess, I mean…&lt;&#x2F;del&gt; &lt;strong&gt;no, really&lt;&#x2F;strong&gt;, it’s beautiful, and I’ll
+prove it to you! All you need to do is clone the “main” tree:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; clone https:&#x2F;&#x2F;git.kernel.org&#x2F;pub&#x2F;scm&#x2F;linux&#x2F;kernel&#x2F;git&#x2F;torvalds&#x2F;linux.git
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Well, actually, this isn’t &lt;em&gt;really&lt;&#x2F;em&gt; the main thing, but it’s &lt;em&gt;one of them&lt;&#x2F;em&gt;,
+together with the one you probably know best (if you’re a rolling release Linux
+user, that is)
+&lt;a href=&quot;https:&#x2F;&#x2F;git.kernel.org&#x2F;pub&#x2F;scm&#x2F;linux&#x2F;kernel&#x2F;git&#x2F;stable&#x2F;linux&quot;&gt;Greg Kroah-Hartman’s tree&lt;&#x2F;a&gt;
+and that’s only half the story, as each Linux distribution likes to put their
+own flavor of commits on top of that.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+
+&lt;div class=&quot;callout&quot;&gt;
+  &lt;div class=&quot;callout-body&quot;&gt;
+    &lt;p&gt;A useful tip if you want to ‘check out’ both trees is to append remotes to
+your cloned repo, as it doesn’t make sense to clone 2 GB repos that share 90%
+of their code ‘just because’… If you don’t know how to do that it goes on
+the lines of:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; remote add X https:&#x2F;&#x2F;link.to.x&#x2F;git&#x2F;repo.git
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; fetch X
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; checkout X&#x2F;master
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+
+  &lt;&#x2F;div&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;Once you have all that, I’d appreciate it if you could take the time and just
+peer at the massive &lt;code&gt;git log&lt;&#x2F;code&gt; of this thing (I personally like using the Git
+Graph extension on VScode&#x2F;VScodium):&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;kernel-contrib&#x2F;kernel_graph.png&quot; alt=&quot;kernel_graph.png&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;I mean, we have almost 1.1mi commits and some 10k developers working on it, all
+from different backgrounds and places, a couple hundred from competing
+companies even, and they all come together here to code for this project.&lt;&#x2F;p&gt;
+&lt;p&gt;I’m not gonna lie and tell you they all love it, of course a lot of them only
+do this for the money, but even if you can’t find the beauty in this huge
+effort of human collaboration, there’s the sheer power of it to be admired… And
+if you think it’s probably the fruit of a lawsuit in the first place one can
+only really wonder how important of a role licenses have played so far… But
+enough talk!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;contributions&quot;&gt;Contributions&lt;a class=&quot;zola-anchor&quot; href=&quot;#contributions&quot; aria-label=&quot;Anchor link for: contributions&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;I think it’d be pretty cool to have my name in there, I mean, it &lt;strong&gt;is&lt;&#x2F;strong&gt; a huge
+collaborative project, so your contributions probably aren’t going to stand out
+a lot, but I prefer thinking about my code potentially helping a couple hundred
+devices (maybe even thousands? Who knows!), or just thinking that you’ll
+forever have your name in the list of contributors of &lt;strong&gt;the largest open-source
+project ever&lt;&#x2F;strong&gt; 😲. So, with that said, how can you have your little, humble,
+commit in there?&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-do-they-look-like&quot;&gt;What do they look like?&lt;a class=&quot;zola-anchor&quot; href=&quot;#what-do-they-look-like&quot; aria-label=&quot;Anchor link for: what-do-they-look-like&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Well, each commit for the Kernel is called a &lt;em&gt;patch&lt;&#x2F;em&gt;, and you can pretty much
+think of it as a minimal piece of code that has a very well-aimed goal, such as
+a fix for a processor X or to add compatibility to a weird phone Y, or even to
+add some tests for some part of the code that maybe forgotten by mankind.&lt;&#x2F;p&gt;
+&lt;p&gt;And why should this be &lt;em&gt;minimal&lt;&#x2F;em&gt;? I mean, people &lt;strong&gt;do&lt;&#x2F;strong&gt; comment on kernel code,
+and they will also add some verbose names and whatnot… But their &lt;strong&gt;diffs&lt;&#x2F;strong&gt; must
+be kept to a minimum! No one would dare “fix random whitespace in file X”, not
+in a kernel patch.&lt;&#x2F;p&gt;
+&lt;p&gt;The reasoning here is simple: we want to minimise the amount of effort that
+it’d take a maintainer to read through the changes we’re proposing. The less
+unnecessary stuff, the better!&lt;&#x2F;p&gt;
+&lt;p&gt;Then you can argue that the examples I gave don’t seem minimal at all! How can
+one add compatibility to a whole new piece of hardware with a single commit?
+Well, I lied… You probably can’t do ‘a patch’ for this. We’re actually talking
+about a &lt;em&gt;patch series&lt;&#x2F;em&gt;, think of it like your branch of commits, and then each
+commit is a patch, very minimal, very focused, but we’re thinking big, and our
+series is all about that final goal!&lt;&#x2F;p&gt;
+&lt;p&gt;Another very important principle is that commits have to be &lt;em&gt;descriptive&lt;&#x2F;em&gt;, and
+that’s a real pain to learn, I swear I’m trying, but it never seems enough. I
+don’t want to sound dumb on the internet, you probably don’t want it either, so
+being thorough without being verbose ends up being a real challenge! You have
+to write &lt;em&gt;really well&lt;&#x2F;em&gt; and always keep in mind that those who’re reading may
+not have taken a look at what you’re editing, like, never (true story)!&lt;&#x2F;p&gt;
+&lt;p&gt;So a commit message for the kernel must have the main “pieces of code” you
+edited in the commit title, like &lt;code&gt;drm&#x2F;amdgpu, mm&lt;&#x2F;code&gt; (that’d be a patch for the
+&lt;code&gt;mm&lt;&#x2F;code&gt; folder as well as the &lt;code&gt;drivers&#x2F;gpu&#x2F;drm&#x2F;amd&lt;&#x2F;code&gt; folder) followed by the proper
+edit you made, such as &lt;code&gt;Fix oops in trace_cachefiles_mark_buried due to NULL object&lt;&#x2F;code&gt; (feel free to take a look at this commit:
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;torvalds&#x2F;linux&#x2F;commit&#x2F;6e9bfdcf0a3b1c8126878c21adcfc343f89d4a6a&quot;&gt;6e9bfdc&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;p&gt;Some good practices should be known here: always write your commits
+imperatively! I mean, I’ve seen some messages where this isn’t so true, but at
+least the title must be this way, and then for the description you have a
+little more freedom I guess, just do it responsibly! ⚠️ Don’t dare stick some ‘I
+changed X for clarity’ ⚠️ (and keep your emojis safe at home, too!)&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;where-do-they-live&quot;&gt;Where do they live?&lt;a class=&quot;zola-anchor&quot; href=&quot;#where-do-they-live&quot; aria-label=&quot;Anchor link for: where-do-they-live&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Well, this section isn’t so much about where the commits live (I mean, you
+already know that, right?) but actually, how &lt;strong&gt;you&lt;&#x2F;strong&gt; can find a piece of code
+to have your chance at contributing! And please do check out
+&lt;a href=&quot;&#x2F;on-contributing-to-open-source&#x2F;&quot;&gt;my next blog post&lt;&#x2F;a&gt; if you’re looking for
+such a thing (not necessarily related to the Linux kernel, by the way!).&lt;&#x2F;p&gt;
+&lt;p&gt;If you’re at some uni, you probably know someone that knows about a free
+software student group, or maybe there’s such a group on another uni close to
+where you are. Please, don’t feel afraid of contacting them! If you truly want
+to contribute your interest will show, and people oftentimes want to help!&lt;&#x2F;p&gt;
+&lt;p&gt;If you aren’t at some uni, I still think going through those student groups is
+rather safe, but you can try your hand at some alternatives, like the
+&lt;a href=&quot;https:&#x2F;&#x2F;kernelnewbies.org&#x2F;&quot;&gt;kernel newbies’&lt;&#x2F;a&gt;
+advices (and they even have an IRC channel).&lt;&#x2F;p&gt;
+&lt;p&gt;It may seem very difficult at first, but hey, you’re reading through this, I
+think you can manage :D.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;after-you-ve-made-your-patch-series&quot;&gt;After you’ve made your patch series&lt;a class=&quot;zola-anchor&quot; href=&quot;#after-you-ve-made-your-patch-series&quot; aria-label=&quot;Anchor link for: after-you-ve-made-your-patch-series&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;So, you’ve done it, you’ve made your own first kernel patch 2000 pro series X,
+I’m so proud! How do you get it accepted? Easy enough as it may seem, there are
+no pull requests around here: it’s mailing list time and your mom isn’t coming
+to get you 😢. But fear not, it’s &lt;strong&gt;really not&lt;&#x2F;strong&gt; as bad as it seems! Of course,
+you might have some trouble with setting up &lt;code&gt;git-send-email&lt;&#x2F;code&gt;, or even finding
+the maintainer for your piece of code, but in the end you’re just dealing with
+other people, who have also been where you are and also made many mistakes…&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sending-e-mails-via-the-terminal&quot;&gt;Sending e-mails via the terminal&lt;a class=&quot;zola-anchor&quot; href=&quot;#sending-e-mails-via-the-terminal&quot; aria-label=&quot;Anchor link for: sending-e-mails-via-the-terminal&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;That really seems like the worst part of all: how the hell do you do this?
+Well, if you haven’t noticed yet, &lt;code&gt;git&lt;&#x2F;code&gt; was the &lt;code&gt;systemd&lt;&#x2F;code&gt; before &lt;code&gt;systemd&lt;&#x2F;code&gt; 😟.
+But jokes aside, setting up &lt;code&gt;git&lt;&#x2F;code&gt; to send e-mails is actually pretty easy, and
+I recommend following through &lt;a href=&quot;https:&#x2F;&#x2F;git-send-email.io&#x2F;&quot;&gt;this site&lt;&#x2F;a&gt;’s
+tutorial (at least on how to set &lt;code&gt;git-send-email&lt;&#x2F;code&gt; up).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;maintainers&quot;&gt;Maintainers&lt;a class=&quot;zola-anchor&quot; href=&quot;#maintainers&quot; aria-label=&quot;Anchor link for: maintainers&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;The first thing you should do before actually e-mailing your patch series is
+looking for the &lt;em&gt;maintainer&lt;&#x2F;em&gt; of the code you messed around with, as they’re the
+person who’s going to &lt;em&gt;yay&lt;&#x2F;em&gt; or &lt;em&gt;nay&lt;&#x2F;em&gt; your changes in the end. You can think of
+a maintainer as the “owner” of a piece of code (it’s not actually like this,
+but it might be easier to picture it this way…). You can use the
+&lt;code&gt;scripts&#x2F;get_maintainer.pl&lt;&#x2F;code&gt; script to find this all-powerful being you should
+be mailing your patches to, and it &lt;em&gt;should&lt;&#x2F;em&gt; work most of the time, not always
+though, for these times you can &lt;code&gt;git blame&lt;&#x2F;code&gt; the file you’re working on to see
+who might be able to (a) review your changes, and; (b) help you with submitting
+it.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;mailing-lists&quot;&gt;Mailing lists&lt;a class=&quot;zola-anchor&quot; href=&quot;#mailing-lists&quot; aria-label=&quot;Anchor link for: mailing-lists&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;You should also check out some mailing lists related to the subsystem you
+contributed such as the &lt;code&gt;dri-devel&lt;&#x2F;code&gt; or the &lt;code&gt;kunit&lt;&#x2F;code&gt; mailing lists. There is also
+the general kernel list &lt;code&gt;linux-kernel@vger.kernel.org&lt;&#x2F;code&gt;, which you should most
+likely always send your patches to.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;sending-patches&quot;&gt;Sending patches&lt;a class=&quot;zola-anchor&quot; href=&quot;#sending-patches&quot; aria-label=&quot;Anchor link for: sending-patches&quot;&gt;⌗&lt;&#x2F;a&gt;&lt;&#x2F;h3&gt;
+&lt;p&gt;Now we can finally send our patches! It’s usually a good practice to format
+your patches before sending them by doing:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; format-patch -&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;n&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --cover-letter -o &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;output folder&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Where &lt;code&gt;[n]&lt;&#x2F;code&gt; refers to the number of commits you want to include, and then we
+put them in a folder to keep them all together. The cover letter is a little
+something special we will use to explain the context behind our patch series.
+It will be sent as the first e-mail when you mail everything.&lt;&#x2F;p&gt;
+&lt;p&gt;Needless to say you actually have to edit the cover letter file for it to make
+any sense, right? Go on, I’ll wait 💅.&lt;&#x2F;p&gt;
+&lt;p&gt;Then, to send our e-mail(s), we have two main fields to fill out, the &lt;code&gt;to&lt;&#x2F;code&gt; and
+the &lt;code&gt;cc&lt;&#x2F;code&gt;. The &lt;code&gt;to&lt;&#x2F;code&gt; field is who you’re actually addressing with your patch
+series (like the maintainers!), and then the &lt;code&gt;cc&lt;&#x2F;code&gt; should be for all the lists
+(and maybe your friends, also!). The command should be a little like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;git&lt;&#x2F;span&gt;&lt;span&gt; send-email &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;[&lt;&#x2F;span&gt;&lt;span&gt;output folder&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;]&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --to&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;maintainer@mail.com&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --cc&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;linux-kselftest@vger.kernel.org,linux-kernel@vger.kernel.org,kunit-dev@googlegroups.com,~lkcamp&#x2F;patches@lists.sr.ht&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;See you on the next one 😊!&lt;&#x2F;p&gt;
+</description>
+        </item>
+    </channel>
+</rss>

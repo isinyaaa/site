@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>GSoC &#x27;22 final report</title>
+
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Isabella Basso">
+
+    <meta name="theme-color" content="#A052F2">
+
+    
+    <link rel="stylesheet" href="https://crosscat.me/style.css">
+    <link rel="stylesheet" href="https://crosscat.me/color/purple.css">
+
+    <link rel="stylesheet" href="https://crosscat.me/font-hack.css">
+
+
+    
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://crosscat.me/rss.xml">
+    
+        <link rel="shortcut icon" type="image&#x2F;png" href="/favicon_128x128.png">
+    
+    </head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://crosscat.me" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            crosscat.me
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://crosscat.me"></a></li>
+            
+                <li><a href="https://crosscat.me/about">about</a></li>
+            
+                <li><a href="https://github.com/isinyaaa/isinyaaa.github.io" target="_blank" rel="noopener noreferrer">source</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://crosscat.me/gsoc-22-final-report/">GSoC &#x27;22 final report</a></h1>
+    
+        <div class="post-meta-inline">
+            
+    <span class="post-date">
+            2022-09-10
+        
+    </span>
+
+            
+    <span class="post-read-time">
+        :: 10 min read
+    </span>
+
+
+            <!-- TODO: rethink how tags look -->
+            <br>
+            
+        <span class="post-tags-inline"><a class="post-tag" href="https://crosscat.me/tags/kernel/">#kernel</a> <a class="post-tag" href="https://crosscat.me/tags/linux/">#linux</a> <a class="post-tag" href="https://crosscat.me/tags/graphics/">#graphics</a> <a class="post-tag" href="https://crosscat.me/tags/unit-tests/">#unit tests</a></span>
+    
+        </div>
+    
+
+
+        
+        <div class="post-content">
+            <p>Like all things, Google Summer of Code, too, comes to an end.</p>
+<p>Now let’s go over what had to be done, what is done, and what’s left.</p>
+<span id="continue-reading"></span><h2 id="what-had-to-be-done">What had to be done<a class="zola-anchor" href="#what-had-to-be-done" aria-label="Anchor link for: what-had-to-be-done">⌗</a></h2>
+<p>Well, this is rather easy for me to talk about, I’ll be on X.org’s Developers
+Conference soon, and full of motivations behind the work I’ve done.</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>Not just me, though! Me, Maíra and Magali (who might be familiar names to you
+already) will be there as well, and unfortunately Tales didn’t manage to get a
+visa due to bureaucracy layers no one dares to understand.</p>
+
+  </div>
+</div>
+<p>Looking retrospectively, the project’s motivation boils down to Siqueira
+wanting to resolve an internal tension between AMD engineers and the weird code
+they have to manage, unit tests being like a safety valve. As I’ve talked about
+previously, GPU code can be quite <em>intense</em>, the DML module being a
+particularly fun example.</p>
+<p>No tests, just procedurally generated stuff, and there is so much to be done,
+really. Initially we proposed lots of tests, some docs, some refactoring, in my
+case specifically I wanted to make the
+<a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/display/dc/dml/dcn20/display_rq_dlg_calc_20.c"><code>drivers/gpu/drm/amd/display/dc/dml/dcn20/display_rq_dlg_calc_20.c</code></a>
+(breathes <strong>heavily</strong>) look pretty.</p>
+<p>So…</p>
+<h2 id="what-was-actually-done">What was actually done<a class="zola-anchor" href="#what-was-actually-done" aria-label="Anchor link for: what-was-actually-done">⌗</a></h2>
+<h3 id="on-the-kernel">On the Kernel<a class="zola-anchor" href="#on-the-kernel" aria-label="Anchor link for: on-the-kernel">⌗</a></h3>
+<p>Though we all had AMD code enhancement as a primary motivator, I actually did
+some unit tests, and at the end I was caught up in trying to understand what we
+were testing.</p>
+<p>Wasn’t my smartest move (what external contributor actually knows what an RQ
+DLG is? Difficult answers to find, really) but I learnt so much, apart from the
+fact it was really satisfying to document something so convoluted and full of
+internal “slang” (I mean product (code)names or acronyms). But I soon found out
+I’d be a terrible detective, as most of the things we had to test were simply
+unattainable for someone who didn’t have internal docs or lots of experience
+with real GPUs: most things in the DML submodule refer back to themselves, to
+GPU internals, or even to AMD “internals”.</p>
+<p>In the end there were some interesting results from the tests I was actually
+able to conclude, as follows:</p>
+<ul>
+<li>
+<p><a href="https://lore.kernel.org/all/20220811004010.61299-4-tales.aparecida@gmail.com/">drm/amd/display: Introduce Kunit tests to display_rq_dlg_calc_20</a></p>
+<p>This was a single patch I’ve done on the unit tests. Of course there are
+lots more functions to be tested, but that comes in the next section :)</p>
+<p>We collectively discussed some alternatives to deal with the fact the
+functions being tested were all static, as will be discussed by Tales in his
+presentation at the Linux Plumbers Conference.</p>
+<p><a href="https://lpc.events/event/16/contributions/1310/">LPC: How to introduce KUnit to physical device drivers?</a></p>
+<p>There was also some documentation produced regarding the functions and
+structs involved in these tests, but they were not sent yet as they’re
+smaller changes and could be grouped in a patchset addressing this
+specifically.</p>
+</li>
+</ul>
+<h3 id="on-other-projects">On other projects<a class="zola-anchor" href="#on-other-projects" aria-label="Anchor link for: on-other-projects">⌗</a></h3>
+<h4 id="kworkflow">KWorkflow<a class="zola-anchor" href="#kworkflow" aria-label="Anchor link for: kworkflow">⌗</a></h4>
+<p>KW (for the intimate) is a much needed and very interesting project, whom
+I tried my best to contribute to: I spent about a month and a half at the
+beginning of GSoC pushing it, to the point where I simply had no will to make
+my commit messages pretty or to respond maintainers.</p>
+<p>Lucky me the owner of the project is also my GSoC mentor, and he completely
+understood where I was at and that I’d not be able to accomplish the (optional)
+goals I had set for KW in my proposal.</p>
+<p>I really think this situation helped me understand better what is it that we’re
+doing when we contribute to free software, and that was the lesson I took.</p>
+<p>Anyhow, there were many contributions during this period, even though I didn’t
+finish many of them:</p>
+<ul>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/614">#614: Small code cleanup</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/615">#615: Small build fixes</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/616">#616: Separate build config from base kw config</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/617">#617: Speedup build</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/619">#619: Update CI</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/620">#620: Add rsync dependency</a></li>
+<li><a href="https://github.com/kworkflow/kworkflow/pull/631">#631: Update KW setup</a></li>
+</ul>
+<h4 id="igt-gpu-tools">IGT GPU Tools<a class="zola-anchor" href="#igt-gpu-tools" aria-label="Anchor link for: igt-gpu-tools">⌗</a></h4>
+<p>Some things took a lot of our attention apart from the basic motivations of the
+project. As I was previously already working on IGT GPU Tools, I figured it’d
+be interesting to finish related work in that project. What good is making
+tests people aren’t going to use (or maintain?).</p>
+<p>IGT is widely used by the kernel graphics people. It mainly tests GPU stuff
+using userspace APIs, but also does some other interesting things, and we
+figured it’d be very cool to be able to run unit tests there: easy to integrate
+with the pre-existing CI, not too much headache to maintain as the KTAP specs
+get more stable, as well as not requiring so much effort from engineers that
+are already so used to it.</p>
+<ul>
+<li>
+<p><a href="https://lists.freedesktop.org/archives/igt-dev/2022-August/044928.html">patchset: Add support for KUnit tests</a></p>
+<p>Whilst it was not so difficult from the purely technical point of view, this
+might be what helped me the most towards acquiring some intimacy with the C
+language. I felt it deep when I came back to the same code after a month or
+two and saw so much to improve on it, then stepped out again as I waited for
+v1 to be reviewed (which didn’t happen) and came back a while ago to write
+the v2 linked above.</p>
+<p>There were several challenges involved, specially for me: I started coding C
+because of the kernel, all I knew were C-like languages, and they were all
+masking some deep truth about computers to me: pretty error handling, easy to
+use strings, etc.</p>
+<p>I admit I wasn’t as ready for C as I thought, now that I understand it
+better, I can see that clearly. In the end this “quasi-traumatic” experience
+(and I mean the IGT patchset specifically) taught me a lot, and I’m very
+thankful for that opportunity (thanks, André!).</p>
+<p>Apart from the language itself, we also had to decide what would be supported
+in a KTAP parser, and that wasn’t easy.</p>
+</li>
+</ul>
+<h3 id="blog-posts">Blog posts<a class="zola-anchor" href="#blog-posts" aria-label="Anchor link for: blog-posts">⌗</a></h3>
+<p>Well, for me personally this was the best part of this project, I really
+enjoy writing these things, I also enjoy receiving feedback – specially if
+it’s unasked :).</p>
+<p>If you know my blog you know I like to go the difficult route: to talk about
+the objective engineering experience might teach you a lot, but where’s the fun
+in that? Even now I’m trying to bring some subjective matters to this.</p>
+<p>Anyhow, I published two blog posts which you can check out here:</p>
+<ul>
+<li><a href="https://crosscat.me/real-contributions-with-real-money/">Real contributions with real money</a></li>
+<li><a href="https://crosscat.me/an-introduction-to-the-linux-graphics-stack/">An introduction to the Linux graphics stack</a></li>
+</ul>
+<p>And I actually made lots of contributions to the Flusp site as well, whose
+repository was used to review these posts, which I hope will be hosted there as
+long as they’re hosted on my own website.</p>
+<ul>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/95">#95: add reports to site bar</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/100">#100: config: add english feed button</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/101">#101: clean and update Jekyll dependencies in Gemfile</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/102">#102 (blog post review): Add graphics stack blog post</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/103">#103 (blog post review): add Isabella’s GSoC blog post</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/107">#107: _pages/tutorials: add ‘kernel’ category for posts</a></li>
+<li><a href="https://gitlab.com/flusp/flusp.gitlab.io/-/merge_requests/117">#117: Add last updated date and fix feed</a></li>
+</ul>
+<h2 id="what-still-needs-to-be-done">What still needs to be done<a class="zola-anchor" href="#what-still-needs-to-be-done" aria-label="Anchor link for: what-still-needs-to-be-done">⌗</a></h2>
+<p>As I pointed out previously, GPU code can be very interesting! So much so, that
+I purposefully didn’t attempt to rush what was left of my proposal at the end
+of GSoC. It might have been really satisfactory to end GSoC with everything
+accomplished, but if I learnt anything from undergrad it is that you should NOT
+rush what’s important to you.</p>
+<p>From what I’ve talked with my peers, there are two ways of seeing this project:</p>
+<ol>
+<li>
+<p>GSoC is like a deal I made with Google and X.org to accomplish something
+until a due date and get money for it.</p>
+<p>This PoV is okay, but does it teach you anything new? I might as well have
+done some freelancing in that time period, would have got the money, and
+then I’d be very comfortable.</p>
+<p>But I believe there’s so much more to this experience, and that’s something
+Siqueira told us time and again, which brings me to a second, more
+wholesome way of seeing things:</p>
+</li>
+<li>
+<p>GSoC is a sort of first commitment to a community.</p>
+<p>I know this doesn’t sound so clear as the first way of looking at things,
+but follow me on this:</p>
+<p>For the community, timing might be important, but it’s definitely not as
+important as doing solid, good work, and keep pushing it even if it’s not
+as quickly as you’d like.</p>
+<p>I got really burnt out from the first two years at Uni, started working,
+went to live by myself, all that young adult jazz. Trying to always keep up
+with everything was a real challenge, and though I didn’t always give my
+best, well I really tried.</p>
+<p>At first, I was really sad, almost spiraling out of everything
+software-related, but now I see things more clearly, and I’m trying to find
+a rhythm that I can work with, in which I can deliver what I want, and,
+most importantly, what I committed to.</p>
+<p>Going back to Siqueira, what he told us is that (translating loosely):</p>
+<blockquote>
+<p>You got to make a dent in the community so that someone notices you.</p>
+</blockquote>
+<p>And now I see it more clearly.</p>
+<p>I’ve heard so many stories of people who engage on things like GSoC or
+Outreachy just to put it on their CV, then quit, but this is so much more
+important to me.</p>
+<p>I’ve already started making a career in free software, but the project I
+work on at the moment doesn’t allow me to interact so directly with some
+upstream or a community. I definitely want to improve in doing I enjoy and
+believe in, and if it takes some learning that’s only part of the journey
+to becoming a reliable member of some free software community.</p>
+</li>
+</ol>
+<p>So, in concrete terms, what is there to finish?</p>
+<ol>
+<li>
+<p>First and foremost, the ongoing patchset for IGT needs lots of attention, as
+pointed by Michał Winiarski in this thread for example:</p>
+<p><a href="https://lore.kernel.org/all/20220708203052.236290-10-maira.canal@usp.br/">Kernel lore archives: [PATCH v5 9/9] drm: selftest: convert drm_mm selftest to KUnit</a></p>
+</li>
+<li>
+<p>Secondly, of course, finish the original proposal of testing the
+<code>dcn20/display_rq_dlg_calc_20.c</code> file.</p>
+</li>
+</ol>
+<p>Might not sound like a lot, but those are really important things, and I’m sure
+they’ll keep me busy for some time.</p>
+<p>I was also pinged by some people to review their patches, and I want to get
+back to them soon.</p>
+<p>I’ve really been thinking a lot about giving back to the people that helped me
+get here, they were all awesome and I hope I can sow these same seeds and help
+fellow students become contributors as well. Just last week me and Maíra
+decided to try to get some people for a project on (fixing) coverage reports
+for the tests we wrote, but I might as well find another project for myself –
+probably related to XR, if you’re wondering, but I should write about that in
+the future :)</p>
+<p>That’s it, dear reader, thank you a lot for reading this through, see you on
+the next one!</p>
+
+        </div>
+
+        
+    </div>
+
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright copyright--user"><div class="copyright"><span>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</span><span class="copyright-theme"><span class="copyright-theme-sep">:: </span>Theme is based on <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a></span><span class="copyright-theme-sep">:: </span><a href="/index.xml">rss</a></div></div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

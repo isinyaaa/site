@@ -1,0 +1,1 @@
+.comments{margin-top:50px}.comments__title{display:flex;text-align:center;position:relative;margin:100px 0 20px}.comments__title-h{text-align:center;margin:0 auto;padding:5px 10px;background:var(--background);font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;z-index:1}.comments__title hr{position:absolute;left:0;right:0;width:100%;margin-top:15px;z-index:0}

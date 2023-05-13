@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Real contributions with real money</title>
+
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Isabella Basso">
+
+    <meta name="theme-color" content="#A052F2">
+
+    
+    <link rel="stylesheet" href="https://crosscat.me/style.css">
+    <link rel="stylesheet" href="https://crosscat.me/color/purple.css">
+
+    <link rel="stylesheet" href="https://crosscat.me/font-hack.css">
+
+
+    
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://crosscat.me/rss.xml">
+    
+        <link rel="shortcut icon" type="image&#x2F;png" href="/favicon_128x128.png">
+    
+    </head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://crosscat.me" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            crosscat.me
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://crosscat.me"></a></li>
+            
+                <li><a href="https://crosscat.me/about">about</a></li>
+            
+                <li><a href="https://github.com/isinyaaa/isinyaaa.github.io" target="_blank" rel="noopener noreferrer">source</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://crosscat.me/real-contributions-with-real-money/">Real contributions with real money</a></h1>
+    
+        <div class="post-meta-inline">
+            
+    <span class="post-date">
+            2022-06-13
+        
+            [updated 2022-06-25]
+        
+    </span>
+
+            
+    <span class="post-read-time">
+        :: 10 min read
+    </span>
+
+
+            <!-- TODO: rethink how tags look -->
+            <br>
+            
+        <span class="post-tags-inline"><a class="post-tag" href="https://crosscat.me/tags/kernel/">#kernel</a> <a class="post-tag" href="https://crosscat.me/tags/starters/">#starters</a> <a class="post-tag" href="https://crosscat.me/tags/linux/">#linux</a> <a class="post-tag" href="https://crosscat.me/tags/graphics/">#graphics</a> <a class="post-tag" href="https://crosscat.me/tags/testing/">#testing</a></span>
+    
+        </div>
+    
+
+
+        
+        <div class="post-content">
+            <p>Recently I’ve heard from a friend that his professor simply doesn’t believe
+that free software should be profitable, so I’m making this blog post.</p>
+<span id="continue-reading"></span>
+<p>Of course, I don’t <em>just</em> want to rub it in his face, I’m also here to talk
+about my Google Summer of Code project :). Let’s hop into it!</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p><strong>DISCLAIMER:</strong></p>
+<p>For those who don’t know, at the moment of writing this I also work with open
+source at Red Hat, and of course it is a profitable business otherwise I’d be
+unemployed. Notice the context here is very different though as Red Hat not
+only provides source code for their projects but also many other products
+related to systems maintenance and services, such as customer assistance and
+maintenance of customer’s product’s infrastructure.</p>
+<p>It should be also noted that this blog is <strong>in no way what-so-ever related to
+Red Hat or any of its subsidiaries, and conveys my personal opinion only.</strong></p>
+<p>Now we can proceed :).</p>
+
+  </div>
+</div>
+<p>For thy poor readers who don’t already know about this,
+<a href="https://summerofcode.withgoogle.com/">Google Summer of Code</a> (GSoC for the
+intimate) is an annual initiative for encouraging people (mainly students) to
+contribute to open source software projects all around, and there are many
+organizations that take part on it, submitting their mentors’ ideas as possible
+projects, then parsing through to-be-contributors proposals.</p>
+<p>Let me explain this in more detail, so you can catch that carp next year:</p>
+<ul>
+<li>The X.Org Foundation published its mentors
+<a href="https://www.x.org/wiki/SummerOfCodeIdeas/">ideas for projects</a>.</li>
+<li>My first mentor, Rodrigo Siqueira, who is also one of X.Org’s appointed
+mentors told me about this</li>
+<li>Then I made a proposal<sup class="footnote-reference"><a href="#1">1</a></sup> that was very much aligned with his to X.Org in
+GSoC.</li>
+<li>Now we profit!</li>
+</ul>
+<blockquote>
+<p>By the way, I’ve already explained how you can find a local community and,
+possibly even mentors on them in a
+<a href="/on-contributting-to-open-source/">previous blog post</a>, so go check it out
+if you’re not really sure how to approach these situations.</p>
+</blockquote>
+<p>The most obvious ways Google has to incentivize contributions are, of course,
+through money, and also by utilizing their massive reputation to connect people
+(that is, contributors and mentors). Now we get a little more philosophical:
+why does Google, of all companies in the world, sponsor random people to
+contribute to open source?</p>
+<p>The implications of this tell us a lot about software engineering, idealistic
+thinking, and even capitalism itself!</p>
+<h2 id="why-sponsor-something-free-as-in-free-beer">Why sponsor something free (as in free beer)?<a class="zola-anchor" href="#why-sponsor-something-free-as-in-free-beer" aria-label="Anchor link for: why-sponsor-something-free-as-in-free-beer">⌗</a></h2>
+<p>As you might already know, many of these projects exist not only for their own
+sake, but as reliable, auditable, building blocks for larger projects, or even
+as tools, making it very easy and cheap (money-wise and also time-wise) to
+create whatever you might want. So it happens that by having this sort of, at
+first glance, unreasonably undervalued (most times literally free!) tools we
+can build much more valuable software and/or media at exponential rates,
+because the only thing holding us back is the knowledge to yield them.</p>
+<p>Then, as our current financial system much rather values competing alternatives
+in an open <del>battle</del> market, it makes a lot of sense for some of this stuff to
+be as widely available as possible.</p>
+<p>We, of course, can also look at this through idealistic lenses: free (libre)
+software objectively makes the world a better place because</p>
+<ul>
+<li>we worry less about security and privacy violations as anyone can audit the
+source code we’re using and look for problems;</li>
+<li>we can make whatever changes we like to it (mind your licenses, though);</li>
+<li>but most importantly, <strong>we</strong> can make real social impact by improving such
+code, or adding missing functionality.</li>
+</ul>
+<p>That is to say that the real advantage in all of this is that <strong>we</strong> can make
+the world a better place for everyone, one commit at a time, and with almost no
+barriers to entry!</p>
+<h2 id="the-downsides">The downsides<a class="zola-anchor" href="#the-downsides" aria-label="Anchor link for: the-downsides">⌗</a></h2>
+<p>If you’d never thought about this, of course we have some problems here.</p>
+<p>First and foremost, the most obvious issue happens when such software is not
+maintained properly (maintainers may lack resources, for example), and as it
+might be used by many other projects we might have a broken dependency chain.
+This has happened
+<a href="https://www.ncsc.gov.uk/information/log4j-vulnerability-what-everyone-needs-to-know">recently with Log4j</a>
+and it’s caused a huge turmoil.</p>
+<p>Still onto this issue, we’re never totally sure if the code has been audited
+properly. Sometimes maintainers also aren’t as experienced as we’d hope, and
+end up making mistakes.</p>
+<p>A huge chunk of this problem happens primarily when projects aren’t so
+interesting and have small user base, or when its maintainers lack appeal (e.g.
+they might be blunt on community interactions) and, as a consequence, cannot
+build a proper community around it.</p>
+<p>This is a problem that large corporations can usually deal with in their
+products, as they can just select competent developers and pay them good money
+to maintain literally depressing code bases.</p>
+<p>Another problem is having <em>bloated</em> or <em>unruly</em> software. Of course this isn’t
+exclusive to open source (just look at Microsoft Windows for example), but it
+can be made worse, as maintainers might have different views on what’s
+important and no consensus as to which path to follow.</p>
+<p>Using the Linux kernel as an example, even with Linus as the head of the
+project it still has had a history of too many ABI changes<sup class="footnote-reference"><a href="#2">2</a></sup> <sup class="footnote-reference"><a href="#3">3</a></sup> and still has many
+issues caused simply by leaving code “unattended” (i.e.
+<a href="https://portswigger.net/daily-swig/ill-advised-research-on-linux-kernel-lands-computer-scientists-in-hot-water">introduction of hypocrite commits</a>,
+or
+<a href="https://lore.kernel.org/all/20211208012529.372478-1-isabbasso@riseup.net/">easy to solve compilation warnings that were simply overlooked</a>).</p>
+<p>This might have been a product of overworked maintainers who have no time to
+review every piece of every patch, coupled with their trust onto familiar
+developers who have no better ways to check if their contributions are up to a
+certain threshold than to run some scripts on them or wait for some CI to fail
+and warn them.</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>This might not be the full picture of upsides <em>vs</em> downsides, but it’s
+certainly one which I’ve been very exposed to recently, so that’s my take on
+it.</p>
+<p>I recommend having a look at
+<a href="https://rosenzweig.io/blog/software-freedom-isnt-about-licenses-its-about-power.html">Rosenzweig’s blog post</a>
+for a more in depth discussion on issues regarding licensing and open source
+software.</p>
+
+  </div>
+</div>
+<h2 id="giving-a-hand-to-our-beloved-projects">Giving a hand to our beloved projects<a class="zola-anchor" href="#giving-a-hand-to-our-beloved-projects" aria-label="Anchor link for: giving-a-hand-to-our-beloved-projects">⌗</a></h2>
+<p>With all of this in mind, I personally believe that as starters in this
+contribution journey the most valuable thing we can give back to maintainers is
+to provide fixes for overlooked problems, or even better, provide ways to help
+more experienced developers make better code.</p>
+<p>What do I mean with this? Simply put</p>
+<ul>
+<li>If code breaks a lot, make a test for it!</li>
+<li>If it has too many small problems that should not be overlooked, fix them!</li>
+<li>If it misses documentation, understand it and upstream your newfound
+knowledge!</li>
+</ul>
+<p>It’s literally <strong>that simple</strong>!</p>
+<p>What gets to me is that those are usually very simple things, and a new
+contributor might want to make contributions as heavy as those they see
+maintainers making. But that’s just <strong>not realistic</strong> for most newbies.</p>
+<p>And of course it’s a lot less interesting to send PRs adding a test than it is
+to upstream emoji support for Intel graphics drivers, but you often gotta start
+small, kiddo.</p>
+<p>So, onto my GSoC project, what the hell am I even doing?</p>
+<h2 id="isinya-s-gsoc-101">Isinya’s GSoC 101<a class="zola-anchor" href="#isinya-s-gsoc-101" aria-label="Anchor link for: isinya-s-gsoc-101">⌗</a></h2>
+<p>As alluded to above, I’m adding tests to graphics drivers in the kernel.
+Specifically to the AMDGPU driver, which is a ginourmous beast of a thing,
+being literally the
+<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AMDGPU-Closing-4-Million">largest in the Linux kernel currently</a>.
+Of course that with great powers come great headaches and so it happens that
+the AMD driver for its GPUs has many shady pieces of code, and a core
+representative of which is its DML submodule that, roughly speaking, is
+responsible for providing the absolute best timing values for internal GPU
+components, and it achieves this through a series of
+<a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/display/dc/dml/dcn20/display_rq_dlg_calc_20.c">unorthodox</a>
+floating point calculations.</p>
+<blockquote>
+<p>For the matter, I’ll specifically be working with this file, wish me luck!</p>
+</blockquote>
+<!--TODO: missing references
+For starters, it wasn't even written by human hands. This submodule, my friends,
+was procedurally generated! -->
+<p>Another thing that makes it an absolute nightmare to deal with is that floating
+point routines are simply not welcomed in
+<a href="https://stackoverflow.com/questions/13886338/use-of-floating-point-in-the-linux-kernel">Linux’s kernel code</a>.
+No one likes to even review that.</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>Of course some kernels (like Window’s) do have floating point support, and
+there’s no strong argument to not have it nowadays, as modern CPUs are pretty
+well optimized for this – just look at modern SIMD instruction sets for
+example (SSE2 onwards) –, and as a matter of fact, modern GPUs can perform
+just the same whether we’re using them for integers or floating point numbers!</p>
+
+  </div>
+</div>
+<!-- TODO: get a better reference for that -->
+<p>All of this conspires to a perpetual state of “just let it be”
+(<a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/display/dc/dml/dcn20/display_rq_dlg_calc_20.c#L56">perpetuated by the engineers themselves…</a>),
+and we end up with bloated, hard-to-read routines, which are unfortunately core
+to their most cutting-edge GPUs.</p>
+<p>Such is the rabbit hole I got into! But not alone, mind you,
+<a href="https://mairacanal.github.io/gsoc-22/">Maíra Canal</a> and
+<a href="https://tales-aparecida.github.io/tales-tips-and-tricks/posts/gsoc-report-1/">Thales Aparecida</a>
+will be joining me for lots of <del>crying in the bathroom</del> I mean <strong>FUN</strong>! Lots
+of fun! <a href="https://magalilemes.github.io/">Magali Lemes</a> will also be joining our
+party while doing her final work for undergrad, so stay tuned :).</p>
+<p>I also managed to clone my mentor, Rodrigo Siqueira, and now I have three!
+Starring: <a href="https://melissawen.github.io/">Melissa Wen</a> and
+<a href="https://andrealmeid.com/">André Almeida</a>!</p>
+<p>I hope to learn a lot, being in such great company, and with them, we should be
+able to at least “sweep” some piles of sand from under AMD’s GPU driver carpet
+(or so I hope).</p>
+<p>If you’re wondering what exactly we’re proposing, you can look at my project
+submission<sup class="footnote-reference"><a href="#1">1</a></sup>, but in short we should be creating tests for some DML files,
+which is a task that in itself already encompasses many technical obstacles,
+like testing in real hardware, or mocking it, and also ensuring that these
+tests are compatible with IGT, which I’ll talk about in my next blog post.
+We’re also concerned with generating coverage reports for the tests,
+refactoring these monstrous files, and documenting them better.</p>
+<p>Last but not least, GSoC also appreciates community presence, so you should see
+more stuff around here, and I’ve also set up an IRC bouncer to stay up-to-date
+24/7 with some communities (ping me [isinyaaa] anytime on #dri-devel if you
+wish 😊).</p>
+<p>See you later alligator!</p>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">1</sup>
+<p><a href="https://summerofcode.withgoogle.com/programs/2022/projects/6AoBcunH">My GSoC proposal</a>.
+If you want to see it in full, just ping me and I’ll be happy to share :).</p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">2</sup>
+<p><a href="https://github.com/lvc/kernel-abi-tracker">Kernel ABI tracker</a></p>
+</div>
+<div class="footnote-definition" id="3"><sup class="footnote-definition-label">3</sup>
+<p><a href="https://abi-laboratory.pro/?view=timeline&amp;l=linux">ABI tracker preview (outdated)</a></p>
+</div>
+
+        </div>
+
+        
+    </div>
+
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright copyright--user"><div class="copyright"><span>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</span><span class="copyright-theme"><span class="copyright-theme-sep">:: </span>Theme is based on <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a></span><span class="copyright-theme-sep">:: </span><a href="/index.xml">rss</a></div></div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>

@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>An introduction to the Linux graphics stack</title>
+
+    
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <meta name="robots" content="noodp"/>
+    <meta name="author" content="Isabella Basso">
+
+    <meta name="theme-color" content="#A052F2">
+
+    
+    <link rel="stylesheet" href="https://crosscat.me/style.css">
+    <link rel="stylesheet" href="https://crosscat.me/color/purple.css">
+
+    <link rel="stylesheet" href="https://crosscat.me/font-hack.css">
+
+
+    
+        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://crosscat.me/rss.xml">
+    
+        <link rel="shortcut icon" type="image&#x2F;png" href="/favicon_128x128.png">
+    
+    </head>
+
+<body class="">
+<div class="container">
+    
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__logo">
+                    
+                <a href="https://crosscat.me" style="text-decoration: none;">
+                    <div class="logo">
+                      
+                            crosscat.me
+                        
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        
+        
+                <nav class="menu">
+            <ul class="menu__inner">
+                <li class="active"><a href="https://crosscat.me"></a></li>
+            
+                <li><a href="https://crosscat.me/about">about</a></li>
+            
+                <li><a href="https://github.com/isinyaaa/isinyaaa.github.io" target="_blank" rel="noopener noreferrer">source</a></li>
+            </ul>
+        </nav>
+    
+    
+        
+    </header>
+    
+
+    <div class="content">
+        
+    <div class="post">
+        
+    <h1 class="post-title"><a href="https://crosscat.me/an-introduction-to-the-linux-graphics-stack/">An introduction to the Linux graphics stack</a></h1>
+    
+        <div class="post-meta-inline">
+            
+    <span class="post-date">
+            2022-07-24
+        
+            [updated 2022-09-17]
+        
+    </span>
+
+            
+    <span class="post-read-time">
+        :: 12 min read
+    </span>
+
+
+            <!-- TODO: rethink how tags look -->
+            <br>
+            
+        <span class="post-tags-inline"><a class="post-tag" href="https://crosscat.me/tags/kernel/">#kernel</a> <a class="post-tag" href="https://crosscat.me/tags/starters/">#starters</a> <a class="post-tag" href="https://crosscat.me/tags/linux/">#linux</a> <a class="post-tag" href="https://crosscat.me/tags/graphics/">#graphics</a> <a class="post-tag" href="https://crosscat.me/tags/userspace/">#userspace</a></span>
+    
+        </div>
+    
+
+
+        
+        <div class="post-content">
+            <p>Unless you’ve run into a terrible problem with your GPU, I bet you never spent
+some time actually thinking about how we depend so heavily on graphics to
+actually do anything meaningful<sup class="footnote-reference"><a href="#0">1</a></sup> on a computer: from small square blinking
+letters on a terminal to the utmost insanely complex games we play these days -
+in the context of Linux, it all depends on the DRI!</p>
+<span id="continue-reading"></span>
+<p>This should come as surprise to no one! And as you can probably imagine, the
+Linux graphics stack is comprised of many layers of abstractions, going from
+the largely abstracted userspace application that you’re running (a browser!)
+to the bytecode that is actually interpreted by your graphics card.</p>
+<p>These many abstractions are what allow us to have our glorious moments of being
+a hero (or maybe a villain, whatever you’re up to…) without even noticing
+what’s happening, and – most importantly – that allow game devs to make such
+complex games without having to worry about an awful lot of details. They’re
+really a marvel of engineering (!), but not by accident!</p>
+<p>All of those abstraction layers come with a history of their own<sup class="footnote-reference"><a href="#1">2</a></sup>, and it’s
+kinda amazing that we can even have such a smooth experience with all of those,
+community-powered, beautifully thought out, moving pieces, twisting and turning
+in a life of their own.</p>
+<p>Just have a look at the beast we’ll be getting into! Feeling adventurous today,
+ain’t you? Well, fear not. It’s definitely not as bad as it seems, and there’s
+a lot of logic behind (most) things, so let’s go step by step :).</p>
+<p><img src="/graphics-stack/linux-graphics-stack.jpeg" alt="Linux graphics stack (simplified)" /></p>
+<p>Though in most cases we start from the bottom of the stack and build our way
+towards the top, here I think it makes more sense for us to build it upside
+down, as that’s what we’re used to interacting with.</p>
+<blockquote>
+<p>On a funny thought experiment, maybe driver designers do live upside down,
+who knows…</p>
+</blockquote>
+<h2 id="window-servers-and-ttys">Window servers and TTYs<a class="zola-anchor" href="#window-servers-and-ttys" aria-label="Anchor link for: window-servers-and-ttys">⌗</a></h2>
+<p>Even though Linux is generally regarded as a developer/hacker OS, most modern
+distributions don’t require you to ever leave a graphic environment. Even if
+you love using the “terminal” on your distro, that’s simply a <em>terminal
+emulator</em>, which “simulates” using a modern TTY<sup class="footnote-reference"><a href="#6">3</a></sup>.</p>
+<p>While TTYs are provided by the kernel itself, we need so-called <em>display
+servers</em> to actually render something more complex to the user’s screen. It
+acts as an intermediate, dealing with multiple applications wanting to draw
+things to the screen simultaneously.</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>As Linux was created during an era where computation was very much migrating
+from a model of “distributed access” (through time-sharing<sup class="footnote-reference"><a href="#6">1</a></sup>), you can still
+peek into a TTY if you want to:</p>
+<blockquote>
+<p>On most distribution, pressing <code>CTRL+ALT+F1</code> (or <code>+F2</code>, <code>+F3</code> and so on) will
+take you to an old-school text-only display (of course one of these TTYs will
+also contain the display server session you began with).</p>
+</blockquote>
+<p><img src="/graphics-stack/teleprinter.jpeg" alt="Classic teleprinter" /></p>
+<p><img src="/graphics-stack/tty-example.png" alt="Modern TTY" /></p>
+<p>Check out a classic teleprinter in action in
+<a href="https://www.youtube.com/watch?v=2XLZ4Z8LpEE">this video</a> or, if you want to
+understand the working details on Linux, check out
+<a href="https://www.linusakesson.net/programming/tty/index.php">the TTY demystified blog post</a>.</p>
+
+  </div>
+</div>
+<p>But then, it seems logical that the graphic session we’re used to is one layer
+above the OS itself, which only provides those TTYs and, quite likely, the
+<a href="https://en.wikipedia.org/wiki/Application_binary_interface">Application Binary Interface</a>
+(i.e. <em>ABI</em>) needed to “talk” to the OS, which is indeed the case (currently)
+:).</p>
+<p>In an X session for example, the X server (or your compositor) will render its
+windows through this ABI, and not directly through the hardware. Actually,
+the kernel ABI for hardware access through the Direct Rendering Infrastructure
+(<em>DRI</em>) is a recent development. Before it, the X server would simply access
+hardware directly, so all userspace software depended on it, and the slightest
+lack of coordination between applications could wreak havoc in the graphics
+card 😵!</p>
+<p align="center">
+  <img align="left" alt="GPU access before DRI" src="/graphics-stack/no-DRI.png" width="50%">
+  <img align="right" alt="GPU access with DRI" src="/graphics-stack/DRI-simple.png" width="50%">
+</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>The X server has many years of history and lots of “curious” design choices (to
+put it lightly). If you’re at all interested on understand it better, have a
+look at the
+<a href="https://magcius.github.io/xplain/article/x-basics.html">xplain blog</a>!</p>
+
+  </div>
+</div>
+<p>But enough historic techno-babble! How does our application, then, render its
+stuff using a window server? The short answer is: it doesn’t!</p>
+<p>Actually, anything that wants to render elements that are independent of a
+window server will have to use a graphics API like <strong>OpenGL</strong>, and that’s where
+Mesa comes in!</p>
+<h2 id="mesa-and-graphics-apis">Mesa and graphics APIs<a class="zola-anchor" href="#mesa-and-graphics-apis" aria-label="Anchor link for: mesa-and-graphics-apis">⌗</a></h2>
+<p>First, notice that we’re already down a level: the window server shows us
+cute windows and deals with user input in that interface, wonderful! But then I
+open Minecraft, and we’re already asking for 3D objects which the window server
+can’t possibly handle effectively, so
+<a href="https://gitlab.freedesktop.org/mesa/mesa">Mesa</a> was introduced to provide a
+second route for applications to send their complex commands directly to the
+kernel, without the need to go through the display sessions’ (<em>bloated and
+slow</em>) rendering mechanisms, which are quite often single-handedly optimized to
+show us application interfaces (the infamous GUIs).</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>As a side note, the X server is also OpenGL capable, and you can see this
+through its <code>glx*</code> API commands, or even some commands (ever heard of
+<code>glxgears</code>? 😏).</p>
+
+  </div>
+</div>
+<p>On a birds eye view, our (supposed) game will try to run its 3D routines, which
+are written in shader-speak (for example OpenGL’s, whose language is called
+<code>GLSL</code>), which Mesa handles for us, compiling and optimizing it for our
+specific GPU, then sending it to be run by the kernel, just like your window
+server does, but for anything!</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>An important point to notice here is that, of course, the window server is
+still needed for user interaction in our game. It will query and send user
+commands to the application, and will also handle windowing and displaying
+stuff (including our game, as its window is still managed by the window
+server), as well as dealing with many other system-related interactions that
+would be a nightmare for game devs to implement.</p>
+<p>Another important point is that writing user applications which don’t require
+using shaders would be a total nightmare without a display manager, as it
+provides many useful abstractions for that use case (which already covers &gt;90%
+of the uses cases for most people).</p>
+
+  </div>
+</div>
+<p>We’re getting close! Next stop is: the Linux kernel!</p>
+<h2 id="the-drm-and-kms-subsystems">The DRM and KMS subsystems<a class="zola-anchor" href="#the-drm-and-kms-subsystems" aria-label="Anchor link for: the-drm-and-kms-subsystems">⌗</a></h2>
+<p>The Linux kernel is, of course, comprised of many moving parts, including
+inside the Direct Rendering Manager (<em>DRM</em>) itself, which I cannot possibly
+explain in this one blog post (sorry about that!).</p>
+<p>The DRM is addressed using <code>ioctl</code>s (short for <em>I/O Control</em>), which are
+<code>syscall</code>s (short for <em>System Call</em>) used for device specific control, as
+providing generalist <code>syscall</code>s would be nearly impossible – it’s more
+feasible to create one <code>ioctl(device, function, parameters)</code> then treat this in
+a driver than to create 2000 <code>mygpu_do_something_syscall(parameters)</code> for
+“obvious” reasons.</p>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>For the inexperienced reader, it’s interesting to notice here that the approach
+of one <code>syscall</code> per driver-specific command would bloat the general kernel ABI
+with too many generally useless functions, as the large majority of them would
+be used for one and only one driver.</p>
+<p>Just for reference, in my kernel I have 465 <code>syscall</code>s as defined in the
+system manual. Putting this <em>vs</em> a simple estimate of <em>drivers in the kernel *
+commands only they use</em> should give you some perspective on the issue.</p>
+<blockquote>
+<p>Just use <code>man syscalls | grep -E '.*\(2.\s+[0-9.]+' | wc -l</code> if you want to
+query the <code>syscall</code>s defined in your kernel.</p>
+</blockquote>
+
+  </div>
+</div>
+<p>Those <code>ioctl</code>s are then wrapped inside a
+<a href="https://gitlab.freedesktop.org/mesa/drm"><code>libdrm</code> library</a> that provides a
+more comprehensible interface for the poor Mesa developers, which would
+otherwise need to keep checking every <code>ioctl</code> they want to use for the
+<a href="https://docs.kernel.org/userspace-api/media/v4l/user-func.html">unusual macro names</a>
+provided by the kernel’s userspace API.</p>
+<p>One very shady aspect of graphics rendering that the DRM deals with is GPU
+memory management, and it does this through <em>two interfaces</em>, namely:</p>
+<ul>
+<li><strong>GEM</strong> – short for <em>Graphics Execution Manager</em></li>
+<li><strong>TTM</strong> – short for <em>Translation Table Maps</em></li>
+</ul>
+<p>The older of those two is TTM, which was a generalist approach for memory
+management, and it provides literally everything anyone could ever hope for.
+That being said, TTM is regarded as <strong>too</strong> difficult to use<sup class="footnote-reference"><a href="#2">4</a></sup><sup class="footnote-reference"><a href="#3">5</a></sup> as it
+provides a gigantic API, and very convoluted must-have features that end up
+being unyielding. For instance, TTM’s <strong>fencing</strong> mechanism – which is
+responsible for coordinating memory access between the GPU and CPU, just like
+<strong>semaphores</strong> if you’re used to them at all – has a very odd interface. We
+could also talk about TTM’s general inefficiencies which have been noted time
+and time again, as well as its “wicked ways” of doing things, which abuse the
+DMA (short for <em>Direct Memory Access</em>) API for one (check out König’s talk for
+more<sup class="footnote-reference"><a href="#4">6</a></sup>).</p>
+<p>Just like evolution, an alternative to TTM had to come along, and that was our
+friend GEM – which was conceived by Intel, as a simplified interface for
+memory management. It’s much easier to use by comparison, but also much more
+simplified and thus, only fully attends Intel’s specific use case  – that is,
+integrated video cards<sup class="footnote-reference"><a href="#5">7</a></sup> –, as it’s limited to addressing memory shared by
+both GPU and CPU (no discrete video card support at all, really). It also won’t
+handle any fencing, and simply “wait” for the GPU to finish its thing before
+moving on, which is a no-no for those beefy discrete GPUs.</p>
+<p>Then, as anyone sane would much rather be dealing with GEM, <del>all software
+engineers fired themselves from other companies and went to Intel. I hear
+they’re currently working hard to deprecate TTM in an integrated graphics
+supremacy movement</del>. Jokes aside, what actually happened is that DRM drivers
+will usually implement the needed memory management (including fencing)
+functionality in TTM, but provide GEM-like APIs for those things, so that
+everyone ends up happy (except for the people implementing these interfaces, as
+they’re probably quite depressed).</p>
+<p>These memory related aspects are a rabbit hole of their own, and if you’d like
+to have a deeper look into this, I recommend these resources:</p>
+<ul>
+<li><a href="https://en.m.wikipedia.org/wiki/Direct_Rendering_Manager">wikipedia.com - DRM</a></li>
+<li><a href="https://blogs.igalia.com/itoral/2014/07/29/a-brief-introduction-to-the-linux-graphics-stack/">blogs.igalia.com - Intro to Linux graphics stack</a></li>
+<li><a href="https://studiopixl.com/2017-05-13/linux-graphic-stack-an-overview">studiopxl.com - Linux graphics stack overview</a></li>
+</ul>
+
+
+<div class="callout">
+  <div class="callout-body">
+    <p>It’s important to notice, though, that kernel devs are working hard into making
+TTM nicer all around, as it’s used by too many drivers to simply, paraphrasing
+König, “be set on fire” and start a memory interface anew. If you want some
+perspective, take a look at Christian König’s amazing talk<sup class="footnote-reference"><a href="#4">1</a></sup>, where he talks
+about TTM from the viewpoint of a maintainer.</p>
+
+  </div>
+</div>
+<p>Notice, however, that the DRM is only responsible for graphics <em>rendering</em> and
+display mode-setting (that is, basically, setting resolution and refresh rate)
+is done in a separate (but related) subsystem, called <strong>KMS</strong> (short for
+<em>Kernel Mode Setting</em>).</p>
+<p>The KMS logically separates various aspects of image transmission, such as</p>
+<ul>
+<li><strong>connectors</strong> – basically outputs on your GPU</li>
+<li><strong>CRTCs</strong> – representing a controller that reads the final information
+(known as <strong>scanout buffer</strong> or <strong>framebuffer</strong>) to send to those connectors</li>
+<li><strong>encoders</strong> – how that signal should be transmitted through the connector</li>
+<li><strong>planes</strong> – which feed the CRTCs framebuffers with data</li>
+</ul>
+<p>And you can actually find where this information is available by consulting the
+<code>/sys/class/drm</code> folder. There you can see subdirectories referring to specific
+graphics cards (i.e. <code>card*</code>) and also their <em>render nodes</em>, which indicate
+their capabilities of executing <em>general programming</em> applications, like the
+ones in machine learning, which don’t depend on having a graphical output.
+Inside these subdirectories, then, you can see some files indicating things
+like <strong>connection status</strong> or <strong>mode list</strong>.</p>
+<p>For a quick overview, check out this image:</p>
+<p><img src="/graphics-stack/linux-graphics-stack-full.png" alt="Linux graphics stack" /></p>
+<p>I can already hear you say</p>
+<blockquote>
+<p>OMG Isinya, that was a hell of a lot of information 😵.</p>
+</blockquote>
+<p>But hey, you just read it through (what a nerd)! On a following post I’ll talk
+about testing the kernel pieces of this puzzle, hope to see you then :).</p>
+<div class="footnote-definition" id="0"><sup class="footnote-definition-label">1</sup>
+<p>A small disclaimer: of course there are many disabled people which need
+other methods of interaction with a computer that don’t rely as heavily on
+graphics, and I do think it’s a huge problem that we don’t have alternatives
+for those people in a large majority of cases, as most software does not give
+the lightest thought to the vision impaired. I should talk more about this in
+the future but, for now, please don’t forget it’s an existing issue that
+needs addressing!</p>
+</div>
+<div class="footnote-definition" id="1"><sup class="footnote-definition-label">2</sup>
+<p>Which I might even talk about in another post – excuse me, but that
+requires a little too much research for the time I have currently.</p>
+</div>
+<div class="footnote-definition" id="6"><sup class="footnote-definition-label">3</sup>
+<p>A classical TTY (or <em>teleprinter</em> for the acquainted) used to be an
+endpoint for interaction with a central computer that held all the resources
+for users (we call that a <em>time-sharing</em> computer), and was actually not much
+used outside of that context. A terminal emulator would be called a <em>pseudo</em>
+TTY (PTY).</p>
+</div>
+<div class="footnote-definition" id="2"><sup class="footnote-definition-label">4</sup>
+<p><a href="https://lwn.net/Articles/283793/">lwn.net - GEM v. TTM</a></p>
+</div>
+<div class="footnote-definition" id="3"><sup class="footnote-definition-label">5</sup>
+<p><a href="https://dri.freedesktop.org/docs/drm/gpu/drm-mm.html">dri.freedesktop.org - DRM Memory Management</a></p>
+</div>
+<div class="footnote-definition" id="4"><sup class="footnote-definition-label">6</sup>
+<p><a href="https://www.youtube.com/watch?v=MG7_tUNKSt0">youtube.com - the TTM memory manager</a>.</p>
+</div>
+<div class="footnote-definition" id="5"><sup class="footnote-definition-label">7</sup>
+<p>The attentive reader might have thought about Intel’s discrete video
+cards at this point, and as a matter of fact Intel is actually working with
+TTM to support those products. See:
+<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Linux-5.14-TTM-dGPUs-LMEM">phoronix.com - Linux 5.14 enabling Intel graphics TTM usage for their dGPUs</a></p>
+</div>
+
+        </div>
+
+        
+    </div>
+
+
+    </div>
+
+    
+    <footer class="footer">
+        <div class="footer__inner">
+                <div class="copyright copyright--user"><div class="copyright"><span>This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.</span><span class="copyright-theme"><span class="copyright-theme-sep">:: </span>Theme is based on <a href="https://github.com/pawroman/zola-theme-terminimal/">Terminimal</a></span><span class="copyright-theme-sep">:: </span><a href="/index.xml">rss</a></div></div>
+            </div>
+    </footer>
+    
+
+</div>
+</body>
+
+</html>
